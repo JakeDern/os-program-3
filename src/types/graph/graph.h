@@ -30,18 +30,21 @@ Graph *newRecipeGraph();
 
 /**
  * Adds a child to the provided graph node
- * 
  * */
 void addChild(GraphNode *parent, GraphNode *child);
 
 /**
  * 
  * */
-void addNode(RecipeGraph *graph, GraphNode *node);
+void addNode(RecipeGraph *graph, Recipe *r);
 
 /**
+ * Finds an returns the node containing the desired
+ * recipe.
  * 
+ * @returns GraphNode* iff the recipe is found,
+ * null otherwise
  * */
-int containsRecipe(Recipe *target);
+GraphNode *findRecipe(Recipe *target);
 
 #endif

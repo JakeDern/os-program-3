@@ -19,4 +19,8 @@ typedef struct Recipe {
  * */
 Recipe *newRecipe(char *name);
 
+int addCommand(char *command);
+
+int addDependency(char *dependency);
+
 #endif

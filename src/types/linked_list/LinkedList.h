@@ -56,6 +56,6 @@ void *remove(LinkedList *l);
  * 
  * @returns 1 iff the list is empty, 0 otherwise
  * */
-int isEmpty(LinkedList *l);
+int isEmptyList(LinkedList *l);
 
 #endif
