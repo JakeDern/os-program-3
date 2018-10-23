@@ -1,6 +1,8 @@
 #ifndef _LINKEDLIST
 #define _LINKEDLIST
 
+#include <stdlib.h>
+
 const int STACK = 1;
 const int LIST = 2;
 

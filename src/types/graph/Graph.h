@@ -20,23 +20,21 @@ typedef struct RecipeGraph {
  * Allocates memory for and returns a 
  * pointer to a new GraphNode
  * */
-GraphNode *newGraphNode();
+extern Graph *newRecipeGraph();
 
 /**
- * Allocates memory for and returns a 
- * pointer to a new GraphNode
+ * Searches the graph for the parent and child nodes,
+ * and adds creates an arc from parent to child.
+ * 
+ * @returns 0 if the operation was successful, 1 if either
+ * the parent or child were not found 
  * */
-Graph *newRecipeGraph();
-
-/**
- * Adds a child to the provided graph node
- * */
-void addChild(GraphNode *parent, GraphNode *child);
+extern int addArc(GraphNode *parent, GraphNode *child);
 
 /**
  * 
  * */
-void addNode(RecipeGraph *graph, Recipe *r);
+extern void addNode(RecipeGraph *graph, Recipe *r);
 
 /**
  * Finds an returns the node containing the desired
@@ -45,6 +43,6 @@ void addNode(RecipeGraph *graph, Recipe *r);
  * @returns GraphNode* iff the recipe is found,
  * null otherwise
  * */
-GraphNode *findRecipe(Recipe *target);
+extern GraphNode *findRecipe(Recipe *target);
 
 #endif
