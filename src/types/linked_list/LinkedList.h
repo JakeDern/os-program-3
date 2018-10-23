@@ -1,6 +1,9 @@
 #ifndef _LINKEDLIST
 #define _LINKEDLIST
 
+const int STACK = 1;
+const int LIST = 2;
+
 typedef struct ListNode {
     void *data;
     ListNode *next;
@@ -10,7 +13,7 @@ typedef struct LinkedList {
     ListNode *head;
     ListNode *tail;
     int size;
-    int isStack;
+    int type;
     size_t dataSize;
 } LinkedList;
 

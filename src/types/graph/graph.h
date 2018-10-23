@@ -2,7 +2,7 @@
 #define _GRAPH
 
 #include "../linked_list/LinkedList.h"
-#include "../recipe/recipe.h"
+#include "../recipe/Recipe.h"
 
 typedef struct GraphNode {
     /** @type GraphNode */
@@ -10,10 +10,38 @@ typedef struct GraphNode {
     Recipe *recipe;
 } GraphNode;
 
-typedef struct Graph {
-    LinkedList nodes;
+typedef struct RecipeGraph {
     int size;
+    LinkedList nodes;
     GraphNode *root;
 } Graph;
+
+/**
+ * Allocates memory for and returns a 
+ * pointer to a new GraphNode
+ * */
+GraphNode *newGraphNode();
+
+/**
+ * Allocates memory for and returns a 
+ * pointer to a new GraphNode
+ * */
+Graph *newRecipeGraph();
+
+/**
+ * Adds a child to the provided graph node
+ * 
+ * */
+void addChild(GraphNode *parent, GraphNode *child);
+
+/**
+ * 
+ * */
+void addNode(RecipeGraph *graph, GraphNode *node);
+
+/**
+ * 
+ * */
+int containsRecipe(Recipe *target);
 
 #endif
