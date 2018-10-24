@@ -43,6 +43,6 @@ extern void addNode(RecipeGraph *graph, Recipe *r);
  * @returns GraphNode* iff the recipe is found,
  * null otherwise
  * */
-extern GraphNode *findRecipe(Recipe *target);
+extern GraphNode *findRecipe(RecipeGraph *graph, Recipe *target);
 
 #endif
