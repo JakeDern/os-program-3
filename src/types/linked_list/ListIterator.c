@@ -7,6 +7,7 @@ int main(int argc, char **argv) {
 
 }
 
+/** @override */
 ListIterator *newListIterator(LinkedList *l) {
   if (l == NULL) {
     fprintf(stderr, "cannot create iterator from NULL list\n");
@@ -26,10 +27,12 @@ ListIterator *newListIterator(LinkedList *l) {
   return itr;
 }
 
+/** @override */
 int hasNext(ListIterator *itr) {
   return itr->curr->next != NULL;
 }
 
+/** @override */
 void *getNext(ListIterator *itr) {
   if (hasNext(itr) == 0) {
     return NULL;
