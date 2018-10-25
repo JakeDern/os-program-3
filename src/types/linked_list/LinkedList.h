@@ -7,8 +7,8 @@ const int STACK = 1;
 const int LIST = 2;
 
 typedef struct ListNode {
+    struct ListNode *next;
     void *data;
-    ListNode *next;
 } ListNode; 
 
 typedef struct LinkedList {
@@ -19,7 +19,15 @@ typedef struct LinkedList {
     size_t dataSize;
 } LinkedList;
 
-LinkedList *newLinkedList(size_t dataSize, int isStack);
+/**
+ * Allocates memory for and returns a new Linked List
+ * 
+ * @param dataSize the size of the data in this list
+ * @param isStack indicates if this is to be a list or
+ * stack
+ * @returns LinkedList*
+ * */
+extern LinkedList *newLinkedList(size_t dataSize, int isStack);
 
 /**
  * Removes an item from the front of this list,
@@ -28,13 +36,13 @@ LinkedList *newLinkedList(size_t dataSize, int isStack);
  * @returns pointer to next item in the list, or
  * NULL if this list is empty
  * */
-void *pop(LinkedList *l);
+extern void *pop(LinkedList *l);
 
 /**
  * Pushes an item to the front of this list,
  * fails and exits if the list is not a stack
  * */
-void push(LinkedList *l, void *d);
+extern void push(LinkedList *l, void *d);
 
 /**
  * Adds an item to the end of a LinkedList
@@ -42,7 +50,7 @@ void push(LinkedList *l, void *d);
  * @param l the list
  * @param d the data to add to the list
  * */
-void add(LinkedList *l, void *d);
+extern void add(LinkedList *l, void *d);
 
 /**
  * Removes the first item in this list
@@ -51,13 +59,13 @@ void add(LinkedList *l, void *d);
  * @returns a pointer to the first item in the list
  * if it is not empty, NULL otherwise.
  * */
-void *remove(LinkedList *l);
+extern void *removeItem(LinkedList *l);
 
 /**
  * Determines if the given list is empty
  * 
  * @returns 1 iff the list is empty, 0 otherwise
  * */
-int isEmptyList(LinkedList *l);
+extern int isEmptyList(LinkedList *l);
 
 #endif

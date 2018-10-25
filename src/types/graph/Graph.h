@@ -32,7 +32,11 @@ extern Graph *newRecipeGraph();
 extern int addArc(GraphNode *parent, GraphNode *child);
 
 /**
+ * Adds a node to be associated to this graph. This method
+ * does not draw and arcs between the node containing
+ * this recipe and any others
  * 
+ * TODO: int return type?
  * */
 extern void addNode(RecipeGraph *graph, Recipe *r);
 
