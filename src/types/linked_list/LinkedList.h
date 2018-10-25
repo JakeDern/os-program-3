@@ -68,4 +68,10 @@ extern void *removeItem(LinkedList *l);
  * */
 extern int isEmptyList(LinkedList *l);
 
+/**
+ * Retrieves and returns the item at the specified index
+ * 
+ * */
+extern void* getItemAt(LinkedList *l, int idx);
+
 #endif
