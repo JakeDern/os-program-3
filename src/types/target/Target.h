@@ -8,7 +8,7 @@ typedef struct Target {
     /** @type char* */
     LinkedList *dependencies;
     /** @type char* */
-    LinkedList *commands;
+    LinkedList *recipes;
 } Target;
 
 /**
@@ -19,7 +19,7 @@ typedef struct Target {
  * */
 Target *newTarget(char *name);
 
-int addCommand(char *command);
+int addRecipe(char *recipe);
 
 int addDependency(char *dependency);
 

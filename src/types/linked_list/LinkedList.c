@@ -5,7 +5,11 @@
 ListNode *newListNode();
 
 int main(int argc, char **argv) {
-
+  LinkedList *myList = newLinkedList(sizeof(char *), LIST);
+  char *c = "my string";
+  add(myList, (void *) c);
+  char *s = (char*) removeItem(myList);
+  printf("%s\n", s);
 }
 
 /** @override */
@@ -49,7 +53,6 @@ ListNode *newListNode(void *data) {
   }
 
   n->data = data;
-
   return n;
 }
 
@@ -62,7 +65,7 @@ void *pop(LinkedList *l) {
   }
 
   // verify list is not empty
-  if (isEmpty(l)) {
+  if (isEmptyList(l)) {
     fprintf(stderr, "pop attempted on empty stack\n");
     exit(1);
   }
@@ -70,6 +73,7 @@ void *pop(LinkedList *l) {
   // remove head
   ListNode *n = l->head->next;
   l->head->next = l->head->next->next;
+  l->size--;
 
   return n->data;
 }
@@ -80,6 +84,11 @@ void push(LinkedList *l, void *d) {
     fprintf(stderr, "cannot push on a non stack\n");
     exit(1);
   }
+
+  ListNode *node = newListNode(d);
+  node->next = l->head->next;
+  l->head->next = node;
+  l->size++;
 }
 
 /** @override */
@@ -88,6 +97,11 @@ void add(LinkedList *l, void *d) {
     fprintf(stderr, "cannot add on a non list\n");
     exit(1);
   }
+  
+  ListNode *node = newListNode(d);
+  node->next = l->head->next;
+  l->head->next = node;
+  l->size++;
 }
 
 /** @override */
@@ -96,6 +110,18 @@ void *removeItem(LinkedList *l) {
     fprintf(stderr, "cannot remove on a non list\n");
     exit(1);
   }
+
+  if (isEmptyList(l)) {
+    fprintf(stderr, "remove attempted on empty list\n");
+    exit(1);
+  }
+
+  // remove head
+  ListNode *n = l->head->next;
+  l->head->next = l->head->next->next;
+  l->size--;
+
+  return n->data;
 }
 
 /** @override */
