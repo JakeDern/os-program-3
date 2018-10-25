@@ -5,10 +5,10 @@
 
 typedef struct Target {
     char *name;
-    /** @type char* */
+    /** @type Target* */
     LinkedList *dependencies;
     /** @type char* */
-    LinkedList *commands;
+    LinkedList *recipes;
 } Target;
 
 /**
@@ -19,8 +19,14 @@ typedef struct Target {
  * */
 Target *newTarget(char *name);
 
-int addCommand(char *command);
+/**
+ * Adds a recipe to the specified Target
+ */
+int addRecipe(Target *t, char *recipe);
 
-int addDependency(char *dependency);
+/**
+ * Adds a dependency to the specified target
+ * */
+int addDependency(Target *parent, Target *child);
 
 #endif
