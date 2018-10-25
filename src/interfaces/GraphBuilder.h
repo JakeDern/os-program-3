@@ -7,6 +7,6 @@
  * Returns Graph* if the build resulted in a valid
  * graph, NULL otherwise
  * */
-Graph *buildDependencyGraph(LinkedList *recipes);
+Graph *buildDependencyGraph(LinkedList *Targets);
 
 #endif

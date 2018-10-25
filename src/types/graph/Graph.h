@@ -2,15 +2,15 @@
 #define _GRAPH
 
 #include "../linked_list/LinkedList.h"
-#include "../recipe/Recipe.h"
+#include "../target/Target.h"
 
 typedef struct GraphNode {
     /** @type GraphNode */
     LinkedList *children;
-    Recipe *recipe;
+    Target *Target;
 } GraphNode;
 
-typedef struct RecipeGraph {
+typedef struct TargetGraph {
     int size;
     LinkedList nodes;
     GraphNode *root;
@@ -34,15 +34,15 @@ extern int addArc(GraphNode *parent, GraphNode *child);
 /**
  * 
  * */
-extern void addNode(RecipeGraph *graph, Recipe *r);
+void addNode(TargetGraph *graph, Target *r);
 
 /**
  * Finds an returns the node containing the desired
- * recipe.
+ * Target.
  * 
- * @returns GraphNode* iff the recipe is found,
+ * @returns GraphNode* iff the Target is found,
  * null otherwise
  * */
-extern GraphNode *findRecipe(RecipeGraph *graph, Recipe *target);
+GraphNode *findTarget(Target *target);
 
 #endif
