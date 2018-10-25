@@ -17,16 +17,16 @@ typedef struct Target {
  * 
  * @param name the name of the Target
  * */
-Target *newTarget(char *name);
+extern Target *newTarget(char *name);
 
 /**
  * Adds a recipe to the specified Target
  */
-int addRecipe(Target *t, char *recipe);
+extern int addRecipe(Target *t, char *recipe);
 
 /**
  * Adds a dependency to the specified target
  * */
-int addDependency(Target *parent, Target *child);
+extern int addDependency(Target *parent, Target *child);
 
 #endif

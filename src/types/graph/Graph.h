@@ -30,7 +30,7 @@ extern int addArc(Target *parent, Target *child);
  * 
  * TODO: int return type?
  * */
-void addTarget(TargetGraph *graph, Target *r);
+extern void addTarget(TargetGraph *graph, Target *r);
 
 /**
  * Finds an returns the node containing the desired
@@ -39,6 +39,6 @@ void addTarget(TargetGraph *graph, Target *r);
  * @returns GraphNode* iff the Target is found,
  * null otherwise
  * */
-Target *findTarget(Target *target);
+extern Target *findTarget(Target *target);
 
 #endif
