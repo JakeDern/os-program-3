@@ -35,8 +35,8 @@ void *getNext(ListIterator *itr) {
     return NULL;
   }
 
-  ListNode *curr = itr->curr->next;
+  ListNode *next = itr->curr->next;
   itr->curr = itr->curr->next;
-  return curr->data;
+  return next->data;
 }
 
