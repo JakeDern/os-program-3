@@ -4,10 +4,9 @@
 #include "./LinkedList.h"
 
 typedef struct ListIterator {
-  ListNode *head;
+  LinkedList *list;
   ListNode *curr;
   int idx;
-  int size;
 } ListIterator;
 
 /**

@@ -49,6 +49,7 @@ ListNode *newListNode(void *data) {
   }
 
   n->data = data;
+  n->next = NULL;
 
   return n;
 }
