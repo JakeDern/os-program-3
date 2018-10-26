@@ -5,8 +5,8 @@
 #include "../target/Target.h"
 
 typedef struct TargetGraph {
-    LinkedList *Targets;
-} Graph;
+    LinkedList *targets;
+} TargetGraph;
 
 /**
  * Allocates memory for and returns a 
@@ -30,7 +30,7 @@ extern int addArc(Target *parent, Target *child);
  * 
  * TODO: int return type?
  * */
-extern void addTarget(TargetGraph *graph, Target *r);
+extern void addTarget(TargetGraph *graph, Target *t);
 
 /**
  * Finds an returns the node containing the desired
@@ -39,6 +39,6 @@ extern void addTarget(TargetGraph *graph, Target *r);
  * @returns GraphNode* iff the Target is found,
  * null otherwise
  * */
-extern Target *findTarget(Target *target);
+extern Target *findTarget(TargetGraph *graph, Target *target);
 
 #endif
