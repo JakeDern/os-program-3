@@ -4,9 +4,9 @@
 #include "./Target.h"
 #include "../linked_list/LinkedList.h"
 
-int main(int argc, char **argv) {
+// int main(int argc, char **argv) {
 
-}
+// }
 
 /** @override */
 Target *newTarget(char *name) {

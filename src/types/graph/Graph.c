@@ -7,9 +7,9 @@
 
 static int containsTarget(Target *t, LinkedList *l);
 
-int main(int argc, char **argv) {
+// int main(int argc, char **argv) {
   
-}
+// }
 
 /** @override */
 TargetGraph *newTargetGraph() {
