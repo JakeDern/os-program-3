@@ -6,6 +6,7 @@
 
 typedef struct TargetGraph {
     LinkedList *targets;
+    LinkedList *buildTargets;
 } TargetGraph;
 
 /**
@@ -40,5 +41,23 @@ extern void addTarget(TargetGraph *graph, Target *t);
  * null otherwise
  * */
 extern Target *findTarget(TargetGraph *graph, Target *target);
+
+/**
+ * Finds an returns the node containing the desired
+ * Target.
+ * 
+ * @returns GraphNode* iff the Buildtarget is found,
+ * null otherwise
+ * */
+extern Target *findBuildTarget(TargetGraph *graph, Target *target);
+
+/*
+ * Determines whether a graph containing this target contains a cycle
+ * 
+ *@param t is the target in question 
+ * @return 1 if there exists a cycle, 0 if there is no cycle
+ * */
+extern int hasCycle(Target *t);
+
 
 #endif

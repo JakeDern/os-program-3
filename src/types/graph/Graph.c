@@ -5,6 +5,8 @@
 #include "../linked_list/ListIterator.h"
 #include "../linked_list/LinkedList.h"
 
+static int containsTarget(Target *t, LinkedList *l);
+
 int main(int argc, char **argv) {
   
 }
@@ -19,7 +21,7 @@ TargetGraph *newTargetGraph() {
 
   size_t targetSize = sizeof(Target);
   g->targets = newLinkedList(targetSize, LIST);
-
+  g->buildTargets = newLinkedList(targetSize, LIST);
   return g;
 }
 
@@ -52,4 +54,56 @@ Target *findTarget(TargetGraph *graph, Target *t) {
   }
 
   return NULL;
+}
+
+/** @override */
+Target *findBuildTarget(TargetGraph *graph, Target *t) {
+  ListIterator *itr = newListIterator(graph->buildTargets);
+  while (hasNext(itr)) {
+    Target *curr = getNext(itr);
+    
+    if (strcmp(curr->name, t->name) == 0) {
+      return curr;
+    }
+  }
+
+  return NULL;
+}
+
+
+/** @override */
+int hasCycle(Target *t) {
+  LinkedList *visited = newLinkedList(sizeof(Target*), LIST);
+  LinkedList *stack = newLinkedList(sizeof(Target*), STACK);
+
+  push(stack, t);
+  while (!isEmptyList(stack)) {
+    Target *curr = (Target*)pop(stack);
+    if (containsTarget(curr, visited)) {
+      free(visited);
+      free(stack);
+      return 1;
+    }
+
+    add(visited, curr);
+
+    ListIterator *iterator = newListIterator(curr->dependencies);
+    while (hasNext(iterator)) {
+      push(stack, (void*)getNext(iterator));
+    }
+
+  }
+  free(visited);
+  free(stack);
+  return 0;
+}
+
+static int containsTarget(Target *t, LinkedList *l) {
+  ListIterator *iterator = newListIterator(l);
+  while (hasNext(iterator)) {
+    if (t == (Target*)getNext(iterator)) {
+      return 1;
+    }
+  }
+  return 0;
 }
