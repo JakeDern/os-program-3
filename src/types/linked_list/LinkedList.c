@@ -4,10 +4,6 @@
 
 ListNode *newListNode();
 
-int main(int argc, char **argv) {
-
-}
-
 /** @override */
 LinkedList *newLinkedList(size_t dataSize, int isStack) {
   LinkedList *l;
@@ -85,7 +81,7 @@ void push(LinkedList *l, void *d) {
 
   ListNode *node = newListNode(d);
   node->next = l->head->next;
-  l->head->next = node->next;
+  l->head->next = node;
   l->size++;
 }
 
@@ -125,10 +121,11 @@ void *removeItem(LinkedList *l) {
 void *getItemAt(LinkedList *l, int idx) {
   if (l->size <= idx) {
     fprintf(stderr, "cannot remove item at idx %d for list of size %d\n", idx, l->size);
+    exit(1);
   }
 
   ListNode *curr = l->head;
-  for (int i = 0; i < idx; i++) {
+  for (int i = 0; i <= idx; i++) {
     curr = curr->next;
   }
 
