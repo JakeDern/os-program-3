@@ -16,7 +16,7 @@ ListIterator *newListIterator(LinkedList *l) {
   
   ListIterator *itr;
   if ( (itr = malloc(sizeof(ListIterator))) == NULL ) {
-    fprintf(stderr, "failed ot allocate mem for iterator\n");
+    fprintf(stderr, "failed to allocate mem for iterator\n");
     exit(1);
   }
 
