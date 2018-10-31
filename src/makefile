@@ -16,7 +16,7 @@ FileChecker.o:
 Graph.o: 
 	$(CC) $(WARNING_FLAGS) -c ./types/graph/Graph.c
 
-LinkedList.o: ./
+LinkedList.o:
 	$(CC) $(WARNING_FLAGS) -c ./types/linked_list/LinkedList.c 
 
 ListIterator.o:  

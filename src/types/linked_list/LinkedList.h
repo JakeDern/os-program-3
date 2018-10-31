@@ -3,8 +3,7 @@
 
 #include <stdlib.h>
 
-const int STACK = 1;
-const int LIST = 2;
+extern const int STACK, LIST;
 
 typedef struct ListNode {
     struct ListNode *next;

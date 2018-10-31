@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+const int STACK = 1;
+const int LIST = 2;
+
 ListNode *newListNode();
 
 /** @override */
