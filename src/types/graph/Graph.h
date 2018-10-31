@@ -34,13 +34,23 @@ extern int addArc(Target *parent, Target *child);
 extern void addTarget(TargetGraph *graph, Target *t);
 
 /**
+ * Adds a buildTarget node to be associated to this graph. This method
+ * does not draw and arcs between the node containing
+ * this recipe and any others
+ * 
+ * TODO: int return type?
+ * */
+extern void addBuildTarget(TargetGraph *graph, Target *t);
+
+
+/**
  * Finds an returns the node containing the desired
  * Target.
  * 
  * @returns GraphNode* iff the Target is found,
  * null otherwise
  * */
-extern Target *findTarget(TargetGraph *graph, Target *target);
+extern Target *findTarget(TargetGraph *graph, char *target);
 
 /**
  * Finds an returns the node containing the desired
@@ -49,7 +59,7 @@ extern Target *findTarget(TargetGraph *graph, Target *target);
  * @returns GraphNode* iff the Buildtarget is found,
  * null otherwise
  * */
-extern Target *findBuildTarget(TargetGraph *graph, Target *target);
+extern Target *findBuildTarget(TargetGraph *graph, char *target);
 
 /*
  * Determines whether a graph containing this target contains a cycle

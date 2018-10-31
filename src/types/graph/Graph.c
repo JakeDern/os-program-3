@@ -34,21 +34,21 @@ int addArc(Target *parent, Target *child) {
 
 /** @override */
 void addTarget(TargetGraph *graph, Target *t) {
-  if (findTarget(graph, t) != NULL) {
-    fprintf(stderr, "error: Target %s is already in the graph\n", t->name);
-    exit(1);
-  }
-
   add(graph->targets, t);
 }
 
 /** @override */
-Target *findTarget(TargetGraph *graph, Target *t) {
+void addBuildTarget(TargetGraph *graph, Target *t) {
+    add(graph->buildTargets, t);
+}
+
+/** @override */
+Target *findTarget(TargetGraph *graph, char *t) {
   ListIterator *itr = newListIterator(graph->targets);
   while (hasNext(itr)) {
     Target *curr = getNext(itr);
     
-    if (strcmp(curr->name, t->name) == 0) {
+    if (strcmp(curr->name, t) == 0) {
       return curr;
     }
   }
@@ -57,12 +57,12 @@ Target *findTarget(TargetGraph *graph, Target *t) {
 }
 
 /** @override */
-Target *findBuildTarget(TargetGraph *graph, Target *t) {
+Target *findBuildTarget(TargetGraph *graph, char *t) {
   ListIterator *itr = newListIterator(graph->buildTargets);
   while (hasNext(itr)) {
     Target *curr = getNext(itr);
     
-    if (strcmp(curr->name, t->name) == 0) {
+    if (strcmp(curr->name, t) == 0) {
       return curr;
     }
   }
