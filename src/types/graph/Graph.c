@@ -6,6 +6,7 @@
 #include "../linked_list/LinkedList.h"
 
 static int containsTarget(Target *t, LinkedList *l);
+static int hasCycleHelper(Target *t, LinkedList *l);
 
 // int main(int argc, char **argv) {
   
@@ -73,29 +74,41 @@ Target *findBuildTarget(TargetGraph *graph, char *t) {
 
 /** @override */
 int hasCycle(Target *t) {
-  LinkedList *visited = newLinkedList(sizeof(Target*), LIST);
-  LinkedList *stack = newLinkedList(sizeof(Target*), STACK);
 
-  push(stack, t);
-  while (!isEmptyList(stack)) {
-    Target *curr = (Target*)pop(stack);
-    if (containsTarget(curr, visited)) {
-      free(visited);
-      free(stack);
+  ListIterator *iterator = newListIterator(t->dependencies);
+  LinkedList *l = newLinkedList(sizeof(Target*), STACK);
+  int returnVal = 0;
+
+  push(l, t);
+  while(hasNext(iterator)) {
+    Target *next = getNext(iterator);
+    if (hasCycleHelper(next, l)) {
       return 1;
     }
-
-    add(visited, curr);
-
-    ListIterator *iterator = newListIterator(curr->dependencies);
-    while (hasNext(iterator)) {
-      push(stack, (void*)getNext(iterator));
-    }
-
   }
-  free(visited);
-  free(stack);
+
+  return 0;  
+}
+
+static int hasCycleHelper(Target *t, LinkedList *l) {
+  ListIterator *iterator = newListIterator(t->dependencies);
+  
+  if (listContains(l, t)) {
+    return 1;
+  }
+
+  push(l, t);
+
+  while(hasNext(iterator)) {
+    Target *next = getNext(iterator);
+    if (hasCycleHelper(next, l)) {
+      return 1;
+    }
+  }
+
+  pop(l);
   return 0;
+
 }
 
 static int containsTarget(Target *t, LinkedList *l) {

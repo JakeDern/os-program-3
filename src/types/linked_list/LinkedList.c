@@ -1,6 +1,8 @@
 #include "./LinkedList.h"
+#include "./ListIterator.h"
 #include <stdlib.h>
 #include <stdio.h>
+
 
 const int STACK = 1;
 const int LIST = 2;
@@ -138,4 +140,17 @@ void *getItemAt(LinkedList *l, int idx) {
 /** @override */
 int isEmptyList(LinkedList *l) {
   return (l->size) == 0;
+}
+
+int listContains(LinkedList *l, void *item) {
+
+  ListIterator *iterator = newListIterator(l);
+  
+  while (hasNext(iterator)) {
+    if (item == (getNext(iterator))) {
+      return 1;
+    }
+  }
+  return 0;
+
 }

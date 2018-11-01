@@ -16,11 +16,11 @@ FileChecker.o:
 Graph.o: 
 	$(CC) $(WARNING_FLAGS) -c ./types/graph/Graph.c
 
-LinkedList.o:
-	$(CC) $(WARNING_FLAGS) -c ./types/linked_list/LinkedList.c 
-
 ListIterator.o:  
 	$(CC) $(WARNING_FLAGS) -c ./types/linked_list/ListIterator.c 
+	
+LinkedList.o:
+	$(CC) $(WARNING_FLAGS) -c ./types/linked_list/LinkedList.c 
 
 Target.o:  
 	$(CC) $(WARNING_FLAGS) -c ./types/target/Target.c 

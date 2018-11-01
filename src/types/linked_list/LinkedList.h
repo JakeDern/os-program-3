@@ -73,4 +73,12 @@ extern int isEmptyList(LinkedList *l);
  * */
 extern void* getItemAt(LinkedList *l, int idx);
 
+/**
+ * listContains is a reference comparing method that returns 1 if 
+ * the list contains the reference passed in.
+ * @param *l is the list to check, *item is the item to check for.
+ * */
+
+extern int listContains(LinkedList *l, void *item);
+
 #endif
