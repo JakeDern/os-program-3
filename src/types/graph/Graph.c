@@ -28,7 +28,7 @@ TargetGraph *newTargetGraph() {
 
 /** @override */
 int addArc(Target *parent, Target *child) {
-  add(parent->dependencies, (void*) child);
+  addDependency(parent, child);
   return 0;
 }
 
