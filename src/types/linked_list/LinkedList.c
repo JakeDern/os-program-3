@@ -8,6 +8,7 @@ const int STACK = 1;
 const int LIST = 2;
 
 ListNode *newListNode();
+static void freeHelper(ListNode *curr);
 
 /** @override */
 LinkedList *newLinkedList(size_t dataSize, int isStack) {
@@ -152,5 +153,29 @@ int listContains(LinkedList *l, void *item) {
     }
   }
   return 0;
+
+}
+
+int freeList(LinkedList *l) {
+  
+    freeHelper(l->head->next);
+
+    free(l);
+    return 1;
+  
+}
+
+static void freeHelper(ListNode *curr) {
+
+  if (curr->next != NULL) {
+    freeHelper(curr->next);
+  }
+
+  if (curr->data != NULL) {
+    free(curr->data);
+  }
+
+  free(curr);
+  return;
 
 }

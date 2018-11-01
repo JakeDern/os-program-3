@@ -83,30 +83,36 @@ int hasCycle(Target *t) {
   while(hasNext(iterator)) {
     Target *next = getNext(iterator);
     if (hasCycleHelper(next, l)) {
+      free(iterator);
+      freeList(l);
       return 1;
     }
   }
 
+  free(iterator);
+  freeList(l);
   return 0;  
 }
 
 static int hasCycleHelper(Target *t, LinkedList *l) {
-  ListIterator *iterator = newListIterator(t->dependencies);
   
   if (listContains(l, t)) {
     return 1;
   }
-
+  
+  ListIterator *iterator = newListIterator(t->dependencies);  
   push(l, t);
 
   while(hasNext(iterator)) {
     Target *next = getNext(iterator);
     if (hasCycleHelper(next, l)) {
+      free(iterator);
       return 1;
     }
   }
 
   pop(l);
+  free(iterator);
   return 0;
 
 }

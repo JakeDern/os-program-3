@@ -81,4 +81,11 @@ extern void* getItemAt(LinkedList *l, int idx);
 
 extern int listContains(LinkedList *l, void *item);
 
+/**
+ * freeList frees the references to data in the listNode, and frees the list
+ * @param *l is the list to be freed
+ * return 1 on success
+ * */
+extern int freeList(LinkedList *l);
+
 #endif
