@@ -143,16 +143,16 @@ int isEmptyList(LinkedList *l) {
   return (l->size) == 0;
 }
 
-int listContains(LinkedList *l, void *item) {
+void* listContains(LinkedList *l, void *item) {
 
   ListIterator *iterator = newListIterator(l);
   
   while (hasNext(iterator)) {
     if (item == (getNext(iterator))) {
-      return 1;
+      return item;
     }
   }
-  return 0;
+  return NULL;
 
 }
 

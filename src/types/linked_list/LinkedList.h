@@ -79,7 +79,7 @@ extern void* getItemAt(LinkedList *l, int idx);
  * @param *l is the list to check, *item is the item to check for.
  * */
 
-extern int listContains(LinkedList *l, void *item);
+extern void* listContains(LinkedList *l, void *item);
 
 /**
  * freeList frees the references to data in the listNode, and frees the list
