@@ -12,11 +12,11 @@ const int MAX_LINE_LENGTH = 10000;
 static int nextLine(char *buff, int max, FILE *fptr, int lineCount);
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount);
 static char *readRecipe(char* line, int lineLength, int lineCount);
-static void flushToEndOfLine(FILE *fptr);
-static int isWhiteSpace(char c);
 static int isValidTarget(char *s);
 static Target *findOrCreateTarget(char *s, TargetGraph *g);
 static Target *findOrCreateRoot(char *s, TargetGraph *g);
+static int isWhiteSpace(char c);
+static int isBlankLine(char *line, int length, int lineCount);
 
 /** @override */
 TargetGraph *parseMakefile(char *filename) {
@@ -53,7 +53,10 @@ TargetGraph *parseMakefile(char *filename) {
         break;
       }
       case ' ': {
-        //TODO verify line is blank;
+        if (isBlankLine(readBuff, lineLength, lineCnt) == 0) {
+          fprintf(stderr, "Invalid line at line number %d\n", lineCnt);
+          exit(1);
+        } 
         break;
       }
       default: {
@@ -126,6 +129,8 @@ static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
 
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount) {
   // fetch name of target
+  // TODO handle when there is no colon, strok just resturns whole line
+  // instead of null
   char *tName;
   tName = strtok(line, ":");
 
@@ -246,22 +251,28 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g) {
   return t;
 }
 
-int isWhiteSpace(char c) {
-  switch(c) {
-    case '\t':
-    case ' ': {
-      return 1;
-    }
-    default: {
-      return 0; 
+static int isBlankLine(char *line, int lineLength, int lineCount) {
+  for (int i = 0; i < lineLength; i++) {
+    if (isWhiteSpace(line[i]) != 0) {
+      return 0;
     }
   }
+
+  return 1;
 }
 
 static char *readRecipe(char* line, int lineLength, int lineCount) {
-  return NULL;
+  return strdup(line+1);
 }
 
-static void flushToEndOfLine(FILE *fptr) {
-  while (fgetc(fptr) != EOF && fgetc(fptr) != '\n'){}
+static int isWhiteSpace(char c) {
+  switch (c) {
+    case ' ':
+    case '\t': {
+      return 1;
+    }
+    default: {
+      return 0;
+    }
+  }
 }
