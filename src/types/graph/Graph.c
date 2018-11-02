@@ -50,10 +50,11 @@ Target *findTarget(TargetGraph *graph, char *t) {
     Target *curr = getNext(itr);
     
     if (strcmp(curr->name, t) == 0) {
+      free(itr);
       return curr;
     }
   }
-
+  free(itr);
   return NULL;
 }
 
@@ -64,10 +65,11 @@ Target *findBuildTarget(TargetGraph *graph, char *t) {
     Target *curr = getNext(itr);
     
     if (strcmp(curr->name, t) == 0) {
+      free(itr);
       return curr;
     }
   }
-
+  free(itr);
   return NULL;
 }
 
@@ -77,7 +79,6 @@ int hasCycle(Target *t) {
 
   ListIterator *iterator = newListIterator(t->dependencies);
   LinkedList *l = newLinkedList(sizeof(Target*), STACK);
-  int returnVal = 0;
 
   push(l, t);
   while(hasNext(iterator)) {
@@ -121,8 +122,10 @@ static int containsTarget(Target *t, LinkedList *l) {
   ListIterator *iterator = newListIterator(l);
   while (hasNext(iterator)) {
     if (t == (Target*)getNext(iterator)) {
+      free(iterator);
       return 1;
     }
   }
+  free(iterator);
   return 0;
 }
