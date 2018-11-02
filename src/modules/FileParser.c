@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../interfaces/FileParser.h"
 #include "../types/target/Target.h"
+#include "../types/linked_list/ListIterator.h"
 
 const int MAX_NAME_LENGTH = 200;
 const int MAX_LINE_LENGTH = 10000;
@@ -11,6 +13,10 @@ static int nextLine(char *buff, int max, FILE *fptr, int lineCount);
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount);
 static char *readRecipe(char* line, int lineLength, int lineCount);
 static void flushToEndOfLine(FILE *fptr);
+static int isWhiteSpace(char c);
+static int isValidTarget(char *s);
+static Target *findOrCreateTarget(char *s, TargetGraph *g);
+static Target *findOrCreateRoot(char *s, TargetGraph *g);
 
 /** @override */
 TargetGraph *parseMakefile(char *filename) {
@@ -57,6 +63,35 @@ TargetGraph *parseMakefile(char *filename) {
     lineCnt++;
   }
 
+  ListIterator *targetItr = newListIterator(graph->targets);
+  ListIterator *buildItr = newListIterator(graph->buildTargets);
+  
+  printf("ALL TARGETS: \n\n");
+  while (hasNext(targetItr)) {
+    Target *curr = (Target*)getNext(targetItr);
+    printf("%s: ", curr->name);
+    ListIterator *depItr = newListIterator(curr->dependencies);
+    while (hasNext(depItr)) {
+      Target *dep = (Target *)getNext(depItr);
+      printf("%s ", dep->name);
+    }
+    printf("\n");
+  }
+  printf("\n\n");
+
+  printf("ROOT TARGETS: \n\n");
+  while (hasNext(buildItr)) {
+    Target *curr = (Target*)getNext(buildItr);
+    printf("%s: ", curr->name);
+    ListIterator *depItr = newListIterator(curr->dependencies);
+    while (hasNext(depItr)) {
+      Target *dep = (Target *)getNext(depItr);
+      printf("%s ", dep->name);
+    }
+    printf("\n");
+  }
+  printf("\n\n");
+
   // TODO no
   return NULL;
 }
@@ -90,116 +125,126 @@ static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
 }
 
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount) {
-  // validate target name
-  char c;
-  int len = 0;
-  int done = 0;
-  int err = 0;
-  int idx = 0;
-  while (!done && !err) {
-    c = line[idx];
-    idx++;
-    len++;
-    switch ( c ) {
-      // TODO invesitage valid chars for targets
-      case '\t':
-      case '#':
-      case '\n':
-      case ' ': {
-        err = 1;
-        break;
+  // fetch name of target
+  char *tName;
+  tName = strtok(line, ":");
+
+  // if NULL, reject line as invalid
+  if (tName == NULL) {
+    fprintf(stderr, "Invalid line detected on line %d\n", lineCount);
+    exit(1);
+  }
+  
+  // invalid
+  Target* t = findOrCreateRoot(tName, g);
+  if (t == NULL) {
+    fprintf(stderr, "Invalid or duplicate target found on line %d\n", lineCount);
+    exit(1);
+  }
+
+  /**
+   * Parse all dependencies, create their nodes if necessary,
+   * and draw arcs from the target to all of them in the graph
+   * */
+  char *depName;
+  while ( (depName = strtok(NULL, " \t") ) != NULL ) {
+    int depLen = isValidTarget( depName );
+    Target *dep;
+    if ( depLen != 0) {
+      dep = findOrCreateTarget(depName, g);
+      if (dep == NULL) {
+        fprintf(stderr, "Invalid dependency \"%s\" found on line %d", depName, lineCount);
+        exit(1);
       }
+    } else {
+      fprintf(stderr, "Invalid dependency name \"%s\" found on line %d", depName, lineCount);
+      exit(1);
+    }
+
+    addDependency(t, dep);
+  }
+  return t;
+}
+
+/**
+ * Determines if the provided string is a valid name for a
+ * target.
+ * 
+ * @param s the string
+ * @returns the length of the string if it is a valid target
+ * name, 0 otherwise
+ * */
+static int isValidTarget(char *s) {
+  char c;
+  int idx = 0;
+  while ( (c = s[idx]) != '\0' ) {
+    switch (c) {
+      case '\t':
+      case ' ':
       case ':': {
-        done = 1;
+        return 0;
+      }
+      default: {
+        idx++;
       }
     }
   }
 
-  if (err) {
-    fprintf(stderr, "Invalid target on line %d\n", lineCount);
-    exit(1);
-  }
+  return idx;
+}
 
-  // read the target name
-  char *tName = malloc(len);
-  for (int i = 0; i < len - 1; i++) {
-    tName[i] = line[i];
-  }
-  tName[len] = '\0';
-
-  printf("tname: %s\n", tName);
-
-  // fetch target if already exists
-  Target *t;
-  if ( (t = findBuildTarget(g, tName)) == NULL ) {
-    if ( (t = findTarget(g, tName)) == NULL ) {
+/**
+ * Finds the BuildTarget in the provided graph if it already
+ * exists or creates the BuildTarget if it does not.
+ * 
+ * @param s the target name
+ * @param s the graph it belongs to
+ * @returns Target* representing the target with the name provided
+ * if that target was valid. NULL if the name was a duplicate of a
+ * BuildTarget in the graph already
+ * */
+static Target *findOrCreateRoot(char *s, TargetGraph *g) {
+  Target *t = NULL;
+  if ( (t = findBuildTarget(g, s)) == NULL) {
+    if ( (t = findTarget(g, s)) == NULL) {
+      char *tName = strdup(s);
       t = newTarget(tName);
       addTarget(g, t);
       addBuildTarget(g, t);
     }
   } else {
-    fprintf(stderr, "duplicate target %s found on line %d\n", tName, lineCount);
+    return NULL;
   }
-  
-  // read rest of line to get all dependencies
-  while (idx < lineLength) {
-    // iterate through any whitespace
-    c = line[idx];
-    while ( c == ' ' || c == '\t' && idx < lineLength) {
-      idx++;
-      c = line[idx];
-    }
 
-    // read next token
-    int depLen = 0;
-    int depStart = idx;
-    int depErr = 0;
-    while (!depErr) {
-      c = line[idx];
-      break;
-    }
-    break;
-  }
   return t;
 }
 
-// char *getNextToken(char *buff, int start, int end) {
-//   int idx = start;
-//   char c = buff[start];
-//   while ( isWhiteSpace(c) && idx <= end) {
-//     idx++;
-//     c = buff[idx];
-//   }
+/**
+ * Finds the Target in the provided graph if it already
+ * exists or creates the BuildTarget if it does not.
+ * 
+ * @param s the target name
+ * @param s the graph it belongs to
+ * @returns Target* representing the target with the name provided
+ * if that target was valid. NULL if the name was a duplicate of a
+ * BuildTarget in the graph already
+ * */
+static Target *findOrCreateTarget(char *s, TargetGraph *g) {
+  Target *t = NULL;
+  if ( (t = findBuildTarget(g, s)) == NULL) {
+    if ( (t = findTarget(g, s)) == NULL) {
+      char *tName = strdup(s);
+      t = newTarget(tName);
+      addTarget(g, t);
+    }
+  }
+  // TODO look at this logic again
+  // } else {
+  //   return NULL;
+  // }
 
-//   if (idx > end) {
-//     return NULL;
-//   }
-
-//   int len = 0;
-//   int tokStart = idx;
-//   while ( idx <= end  && !isWhiteSpace(buff[idx])) {
-//     idx++;
-//     len++;
-//   }
-
-//   char* buff = malloc(len + 1);
-//   while ( tokStart < idx ) {
-
-//   }
-  
-// }
-
-// int isValidDepChar(char c) {
-//   switch(c) {
-//     case ':':
-//     case '#': {
-//       return 0;
-//     }
-//     default: {
-//       return 1;
-//     }
-//   }
-// }
+  return t;
+}
 
 int isWhiteSpace(char c) {
   switch(c) {
