@@ -1,9 +1,4 @@
-CC = gcc
-CC = gcc
-WARNING_FLAGS = -Wall -Wextra
-EXE = 537make
-SCAN_BUILD_DIR = scan-build-out
-
+#comment
 all: main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o
 	$(CC) -o $(EXE) main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o
 

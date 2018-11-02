@@ -1,3 +1,5 @@
+#include "./interfaces/FileParser.h"
+
 int main(int argc, char **argv) {
-    return 0;
+  parseMakefile("testmake.txt");
 }
