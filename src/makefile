@@ -4,8 +4,8 @@ WARNING_FLAGS = -Wall -Wextra
 EXE = 537make
 SCAN_BUILD_DIR = scan-build-out
 
-all: main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o
-	$(CC) -o $(EXE) main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o
+all: main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o ProgramBuilder.o
+	$(CC) -o $(EXE) main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o ProgramBuilder.o
 
 main.o: main.c 
 	$(CC) $(WARNING_FLAGS) -c main.c 
@@ -27,6 +27,9 @@ Target.o:
 
 FileParser.o:
 	$(CC) $(WARNING_FLAGS) -c ./modules/FileParser.c
+
+ProgramBuilder.o: 
+	$(CC) $(WARNING_FLAGS) -c ./modules/ProgramBuilder.c 
 
 clean:
 	rm $(EXE) *.o

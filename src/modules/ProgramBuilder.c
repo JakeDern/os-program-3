@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 static int buildProgramHelper(Target *t);
 static int needsRebuilding(Target *t);
@@ -62,7 +63,7 @@ static int buildTarget(Target *t) {
     } else {
         ListIterator *iterator = newListIterator(t->recipes);
         while (hasNext(iterator)) {
-            char **curr = getNext(iterator);
+            const char **curr = (const char**)getNext(iterator);
             if (execvp(curr[0], curr)) {
                 exit(1);
             }
