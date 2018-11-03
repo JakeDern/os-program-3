@@ -112,15 +112,16 @@ void *removeItem(LinkedList *l) {
   }
 
   if (isEmptyList(l)) {
-    fprintf(stderr, "remove item attempted on an empty list\n");
-    exit(1);
+    return NULL;
   }
 
   ListNode *node = l->head->next;
+  void *data = node->data;
   l->head->next = l->head->next->next;
   l->size--;
 
-  return node->data;
+  free(node);
+  return data;
 }
 
 /** @override */
@@ -158,7 +159,7 @@ void* listContains(LinkedList *l, void *item) {
 
 int freeList(LinkedList *l) {
   
-    freeHelper(l->head->next);
+    freeHelper(l->head);
 
     free(l);
     return 1;
@@ -167,11 +168,13 @@ int freeList(LinkedList *l) {
 
 static void freeHelper(ListNode *curr) {
 
-  if (curr->next != NULL) {
-    freeHelper(curr->next);
+  if(curr == NULL) {
+    return;
   }
 
-  if (curr->data != NULL) {
+  freeHelper(curr->next);
+
+  if(curr->data != NULL) {
     free(curr->data);
   }
 
