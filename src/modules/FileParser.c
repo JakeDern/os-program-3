@@ -5,27 +5,28 @@
 #include "../interfaces/FileParser.h"
 #include "../types/target/Target.h"
 #include "../types/linked_list/ListIterator.h"
+#include "../types/linked_list/LinkedList.h"
 
 const int MAX_NAME_LENGTH = 200;
 const int MAX_LINE_LENGTH = 10000;
 
 static int nextLine(char *buff, int max, FILE *fptr, int lineCount);
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount);
-static char *readRecipe(char* line, int lineLength, int lineCount);
+static char **readRecipe(char* line, int lineLength, int lineCount);
 static int isValidTarget(char *s);
 static Target *findOrCreateTarget(char *s, TargetGraph *g);
 static Target *findOrCreateRoot(char *s, TargetGraph *g);
 static int isWhiteSpace(char c);
-static int isBlankLine(char *line, int length, int lineCount);
+static int isBlankLine(char *line, int length);
 static void printGraph(TargetGraph *graph);
+static int isValidRecipeToken(char *token);
 
 /** @override */
 TargetGraph *parseMakefile(char *filename) {
   // open file
   FILE *fptr;
   if ( (fptr = fopen(filename, "r")) == NULL) {
-    fprintf(stderr, "failed to find makefile\n");
-    exit(1);
+    return NULL;
   }
 
   int lineCnt = 1;
@@ -35,18 +36,26 @@ TargetGraph *parseMakefile(char *filename) {
   while (!feof(fptr)) {
     int lineLength = nextLine(readBuff, MAX_LINE_LENGTH, fptr, lineCnt);
     char firstChar = readBuff[0];
-    printf("line %d: %s\n", lineCnt, readBuff);
+
     switch (firstChar) {
       case '#': {
         break;
       }
       case '\t': {
+        if (isBlankLine(readBuff, lineLength) == 1) {
+          printf("%d blank\n", lineCnt);
+          break;
+        }
+
         if (currTarget == NULL) {
           fprintf(stderr, "recipe detected before target\n");
           exit(1);
         }
         //TODO handle bad lines starting with multiple tabs
-        char *recipe = readRecipe(readBuff, lineLength, lineCnt);
+        char **recipe = readRecipe(readBuff, lineLength, lineCnt);
+        if (recipe == NULL ){
+          fprintf(stderr, "Bad recipe found on line %d\n", lineCnt);
+        }
         addRecipe(currTarget, recipe);
       }
       case '\0':
@@ -54,7 +63,7 @@ TargetGraph *parseMakefile(char *filename) {
         break;
       }
       case ' ': {
-        if (isBlankLine(readBuff, lineLength, lineCnt) == 0) {
+        if (isBlankLine(readBuff, lineLength) == 0) {
           fprintf(stderr, "Invalid line at line number %d\n", lineCnt);
           exit(1);
         } 
@@ -67,7 +76,7 @@ TargetGraph *parseMakefile(char *filename) {
     lineCnt++;
   }
 
-  printGraph(graph);
+  // printGraph(graph);
 
   // TODO no
   return NULL;
@@ -226,9 +235,9 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g) {
   return t;
 }
 
-static int isBlankLine(char *line, int lineLength, int lineCount) {
+static int isBlankLine(char *line, int lineLength) {
   for (int i = 0; i < lineLength; i++) {
-    if (isWhiteSpace(line[i]) != 0) {
+    if (isWhiteSpace(line[i]) != 1) {
       return 0;
     }
   }
@@ -236,8 +245,61 @@ static int isBlankLine(char *line, int lineLength, int lineCount) {
   return 1;
 }
 
-static char *readRecipe(char* line, int lineLength, int lineCount) {
-  return strdup(line+1);
+static char **readRecipe(char* line, int lineLength, int lineCount) {
+  char *tok;
+  LinkedList *tokens = newLinkedList(sizeof(char*), LIST);
+  tok = strtok(line, " \t");
+  while (tok != NULL) {
+    if (isValidRecipeToken(tok) == 0) {
+      freeList(tokens);
+      return NULL;
+    } else {
+      add(tokens, (void*)strdup(tok));
+    }
+    tok = strtok(NULL, " \t");
+  }
+
+  char **argv = malloc((tokens->size) * sizeof(char*));
+  int idx = 0;
+  char *curr = (char*)removeItem(tokens);
+  while (curr != NULL) {
+    argv[idx] = curr;
+    curr = removeItem(tokens);
+    idx++;
+  }
+
+  free(tokens->head);
+  free(tokens);
+
+  // printf("tokens:::\n");
+  // for (int i = 0; i < idx; i++) {
+  //   printf("%s ", argv[i]);
+  // }
+  // printf("\n");
+  // printf("end tokens:::\n");
+
+  return argv;
+}
+
+static int isValidRecipeToken(char *token) {
+  char c; 
+  int idx = 0;
+  while (c != '\0') {
+    c = token[idx];
+    switch(c) {
+      case ' ':
+      case '\t':
+      case '\n':
+      case ':': {
+        return 0;
+      }
+      default: {
+        idx++;
+      }
+    }
+  }
+
+  return idx == 0 ? 0 : 1;
 }
 
 static int isWhiteSpace(char c) {

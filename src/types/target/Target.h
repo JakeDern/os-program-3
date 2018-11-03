@@ -22,7 +22,7 @@ extern Target *newTarget(char *name);
 /**
  * Adds a recipe to the specified Target
  */
-extern int addRecipe(Target *t, char *recipe);
+extern int addRecipe(Target *t, char **recipe);
 
 /**
  * Adds a dependency to the specified target

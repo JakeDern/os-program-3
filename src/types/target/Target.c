@@ -29,7 +29,7 @@ Target *newTarget(char *name) {
 }
 
 /** @override */
-int addRecipe(Target *t, char *recipe) {
+int addRecipe(Target *t, char **recipe) {
   add(t->recipes, (void *)recipe);
   return 0;
 }
