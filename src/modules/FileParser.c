@@ -17,6 +17,7 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g);
 static Target *findOrCreateRoot(char *s, TargetGraph *g);
 static int isWhiteSpace(char c);
 static int isBlankLine(char *line, int length, int lineCount);
+static void printGraph(TargetGraph *graph);
 
 /** @override */
 TargetGraph *parseMakefile(char *filename) {
@@ -66,34 +67,7 @@ TargetGraph *parseMakefile(char *filename) {
     lineCnt++;
   }
 
-  ListIterator *targetItr = newListIterator(graph->targets);
-  ListIterator *buildItr = newListIterator(graph->buildTargets);
-  
-  printf("ALL TARGETS: \n\n");
-  while (hasNext(targetItr)) {
-    Target *curr = (Target*)getNext(targetItr);
-    printf("%s: ", curr->name);
-    ListIterator *depItr = newListIterator(curr->dependencies);
-    while (hasNext(depItr)) {
-      Target *dep = (Target *)getNext(depItr);
-      printf("%s ", dep->name);
-    }
-    printf("\n");
-  }
-  printf("\n\n");
-
-  printf("ROOT TARGETS: \n\n");
-  while (hasNext(buildItr)) {
-    Target *curr = (Target*)getNext(buildItr);
-    printf("%s: ", curr->name);
-    ListIterator *depItr = newListIterator(curr->dependencies);
-    while (hasNext(depItr)) {
-      Target *dep = (Target *)getNext(depItr);
-      printf("%s ", dep->name);
-    }
-    printf("\n");
-  }
-  printf("\n\n");
+  printGraph(graph);
 
   // TODO no
   return NULL;
@@ -216,6 +190,8 @@ static Target *findOrCreateRoot(char *s, TargetGraph *g) {
       t = newTarget(tName);
       addTarget(g, t);
       addBuildTarget(g, t);
+    } else {
+      addBuildTarget(g ,t);
     }
   } else {
     return NULL;
@@ -242,9 +218,8 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g) {
       t = newTarget(tName);
       addTarget(g, t);
     }
-  }
-  // TODO look at this logic again
-  // } else {
+  } 
+  // }else {
   //   return NULL;
   // }
 
@@ -275,4 +250,35 @@ static int isWhiteSpace(char c) {
       return 0;
     }
   }
+}
+
+static void printGraph(TargetGraph *graph) {
+  ListIterator *targetItr = newListIterator(graph->targets);
+  ListIterator *buildItr = newListIterator(graph->buildTargets);
+  
+  printf("ALL TARGETS: \n\n");
+  while (hasNext(targetItr)) {
+    Target *curr = (Target*)getNext(targetItr);
+    printf("%s: ", curr->name);
+    ListIterator *depItr = newListIterator(curr->dependencies);
+    while (hasNext(depItr)) {
+      Target *dep = (Target *)getNext(depItr);
+      printf("%s ", dep->name);
+    }
+    printf("\n");
+  }
+  printf("\n\n");
+
+  printf("ROOT TARGETS: \n\n");
+  while (hasNext(buildItr)) {
+    Target *curr = (Target*)getNext(buildItr);
+    printf("%s: ", curr->name);
+    ListIterator *depItr = newListIterator(curr->dependencies);
+    while (hasNext(depItr)) {
+      Target *dep = (Target *)getNext(depItr);
+      printf("%s ", dep->name);
+    }
+    printf("\n");
+  }
+  printf("\n\n");
 }
