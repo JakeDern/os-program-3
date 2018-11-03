@@ -7,6 +7,6 @@
 #include "../types/linked_list/ListIterator.h"
 #include "../types/target/Target.h"
 
-int buildProgram(Target *target);
+int buildProgram(Target *t);
 
 #endif
