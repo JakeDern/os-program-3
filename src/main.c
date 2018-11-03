@@ -7,12 +7,16 @@ int main(int argc, char **argv) {
   
   TargetGraph *graph;
    
-  if ((graph = parseMakefile("makefile")) == NULL) {
+  if ( (graph = parseMakefile("testmake.txt")) == NULL) {
+    fprintf(stderr, "failed to find specified makefile\n");
     exit(1);
   }
 
+  printGraph(graph);
+
   //check for cycles in graph
   ListIterator *iterator = newListIterator(graph->buildTargets);
+  printf("i know\n");
   while (hasNext(iterator)) {
     Target *curr = getNext(iterator);
     if (hasCycle(curr)) {

@@ -18,7 +18,7 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g);
 static Target *findOrCreateRoot(char *s, TargetGraph *g);
 static int isWhiteSpace(char c);
 static int isBlankLine(char *line, int length);
-static void printGraph(TargetGraph *graph);
+void printGraph(TargetGraph *graph);
 static int isValidRecipeToken(char *token);
 
 /** @override */
@@ -76,10 +76,10 @@ TargetGraph *parseMakefile(char *filename) {
     lineCnt++;
   }
 
-  // printGraph(graph);
+  printGraph(graph);
 
   // TODO no
-  return NULL;
+  return graph;
 }
 
 static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
@@ -203,6 +203,7 @@ static Target *findOrCreateRoot(char *s, TargetGraph *g) {
       addBuildTarget(g ,t);
     }
   } else {
+    fprintf(stderr, "duplicate target \"%s\" found on line\n", s);
     return NULL;
   }
 
@@ -314,7 +315,7 @@ static int isWhiteSpace(char c) {
   }
 }
 
-static void printGraph(TargetGraph *graph) {
+void printGraph(TargetGraph *graph) {
   ListIterator *targetItr = newListIterator(graph->targets);
   ListIterator *buildItr = newListIterator(graph->buildTargets);
   

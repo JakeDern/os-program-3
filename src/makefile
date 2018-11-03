@@ -1,5 +1,4 @@
 CC = gcc
-CC = gcc
 WARNING_FLAGS = -Wall -Wextra
 EXE = 537make
 SCAN_BUILD_DIR = scan-build-out
@@ -10,25 +9,25 @@ all: main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParse
 main.o: main.c 
 	$(CC) $(WARNING_FLAGS) -c main.c 
 
-FileChecker.o:  
+FileChecker.o: ./modules/FileChecker.c ./interfaces/FileChecker.h
 	$(CC) $(WARNING_FLAGS) -c ./modules/FileChecker.c 
 
-Graph.o: 
+Graph.o: ./types/graph/Graph.c ./types/graph/Graph.h
 	$(CC) $(WARNING_FLAGS) -c ./types/graph/Graph.c
 
-ListIterator.o:  
+ListIterator.o:  ./types/linked_list/ListIterator.c ./types/linked_list/ListIterator.h
 	$(CC) $(WARNING_FLAGS) -c ./types/linked_list/ListIterator.c 
 	
-LinkedList.o:
+LinkedList.o:	./types/linked_list/LinkedList.c ./types/linked_list/LinkedList.h
 	$(CC) $(WARNING_FLAGS) -c ./types/linked_list/LinkedList.c 
 
-Target.o:  
+Target.o:  ./types/target/Target.c ./types/target/Target.h
 	$(CC) $(WARNING_FLAGS) -c ./types/target/Target.c 
 
-FileParser.o:
+FileParser.o: ./modules/FileParser.c ./interfaces/FileParser.h
 	$(CC) $(WARNING_FLAGS) -c ./modules/FileParser.c
 
-ProgramBuilder.o: 
+ProgramBuilder.o: ./modules/ProgramBuilder.c ./interfaces/ProgramBuilder.h
 	$(CC) $(WARNING_FLAGS) -c ./modules/ProgramBuilder.c 
 
 clean:

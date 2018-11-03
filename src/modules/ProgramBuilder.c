@@ -14,13 +14,12 @@ static int needsRebuilding(Target *t);
 static int buildTarget(Target *t);
 
 int buildProgram(Target *t) {
+    if (hasCycle(t)) {
+        exit(1);
+    }
+    buildProgramHelper(t);
 
-if (hasCycle(t)) {
-    exit(1)
-}
-buildProgramHelper(t);
-
-return 1;
+    return 1;
 }
 
 static int buildProgramHelper(Target *t) {
@@ -36,14 +35,13 @@ static int buildProgramHelper(Target *t) {
 
     free(iterator);
     return 1;
-
 }
 
 static int needsRebuilding(Target *t) {
     ListIterator *iterator = newListIterator(t->dependencies);
 
     while (hasNext(iterator)) {
-        if (fileIsOlder(t->name, (getNext(iterator)->name))) {
+        if (fileIsOlder(t->name, ((Target*)getNext(iterator))->name)) {
             free(iterator);
             return 1;
         }
@@ -53,23 +51,23 @@ static int needsRebuilding(Target *t) {
 }
 
 static int buildTarget(Target *t) {
-
-    int pid = fork();
+    pid_t pid = fork();
     if (pid) {
-        int exitVal = wait(pid);
+        int exitVal = wait(&pid);
         if (exitVal) {
+            fprintf(stderr, "failed to execute recipe for target \"%s\"", t->name);
             exit(1);
         }
     } else {
         ListIterator *iterator = newListIterator(t->recipes);
         while (hasNext(iterator)) {
-            const char **curr = (const char**)getNext(iterator);
+            char **curr = (char**)getNext(iterator);
             if (execvp(curr[0], curr)) {
+                printf("bad\n");
                 exit(1);
             }
         }
-
     }
 
-return 0;
+    return 0;
 }
