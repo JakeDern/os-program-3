@@ -63,6 +63,7 @@ static int buildTarget(Target *t) {
         while (hasNext(iterator)) {
             char **curr = (char**)getNext(iterator);
             if (execvp(curr[0], curr)) {
+                free(iterator);
                 printf("bad\n");
                 exit(1);
             }

@@ -4,7 +4,6 @@
 #include "./interfaces/ProgramBuilder.h"
 
 int main(int argc, char **argv) {
-  
   TargetGraph *graph;
    
   if ( (graph = parseMakefile("testmake.txt")) == NULL) {
@@ -12,18 +11,18 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  printGraph(graph);
 
   //check for cycles in graph
   ListIterator *iterator = newListIterator(graph->buildTargets);
-  printf("i know\n");
   while (hasNext(iterator)) {
     Target *curr = getNext(iterator);
     if (hasCycle(curr)) {
+      free(iterator);
       fprintf(stderr, "Cyclical dependency detected with target %s exiting program\n", curr->name);
       exit(1);
     }
   }
+  free(iterator);
   
 
    // determine build target
@@ -45,8 +44,6 @@ int main(int argc, char **argv) {
     buildTarget = getItemAt(graph->buildTargets, 0);
   }
 
-  
-    buildProgram(buildTarget);
-  
-
+  printGraph(graph);
+  // buildProgram(buildTarget);
 }
