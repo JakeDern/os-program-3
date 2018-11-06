@@ -20,6 +20,7 @@ static int isWhiteSpace(char c);
 static int isBlankLine(char *line, int length);
 void printGraph(TargetGraph *graph);
 static int isValidRecipeToken(char *token);
+static void trimWhitespace(char *token);
 
 /** @override */
 TargetGraph *parseMakefile(char *filename) {
@@ -111,9 +112,9 @@ static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCo
 
   char *tName;
   tName = strtok(line, ":");
-
+  trimWhitespace(tName);
   // if NULL, reject line as invalid
-  if ( (tName == NULL) && (isValidTarget(tName) == 1) ) {
+  if ( (tName == NULL) || (isValidTarget(tName) == 0) ) {
     fprintf(stderr, "%d: Invalid line: %s\n", lineCount, line);
     exit(1);
   }
@@ -147,6 +148,19 @@ static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCo
     addDependency(t, dep);
   }
   return t;
+}
+
+static void trimWhitespace(char *token) {
+  int lastChar = 0;
+  int idx = 0;
+  char c;
+  while ( (c = token[idx]) != '\0') {
+    if (isWhiteSpace(c) != 1) {
+      lastChar = idx;
+    }
+    idx++;
+  }
+  token[lastChar+1] = '\0';
 }
 
 /**
@@ -255,24 +269,26 @@ static char **readRecipe(char* line, int lineLength, int lineCount) {
     tok = strtok(NULL, " \t");
   }
 
-  char **argv = malloc((tokens->size) * sizeof(char*));
+  char **argv = malloc(((tokens->size) + 1) * sizeof(char*));
   int idx = 0;
   char *curr = (char*)removeItem(tokens);
+  int last = tokens->size;
   while (curr != NULL) {
     argv[idx] = curr;
     curr = removeItem(tokens);
     idx++;
   }
+  argv[last + 1] = NULL;
 
   free(tokens->head);
   free(tokens);
 
-  // printf("tokens:::\n");
-  // for (int i = 0; i < idx; i++) {
-  //   printf("%s ", argv[i]);
-  // }
-  // printf("\n");
-  // printf("end tokens:::\n");
+  //printf:("recipe: ");
+  printf("recipe: ");
+  for (int i = 0; i < idx; i++) {
+    printf("\"%s\" ", argv[i]);
+  }
+  printf("\n");
 
   return argv;
 }

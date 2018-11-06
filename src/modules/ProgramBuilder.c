@@ -43,7 +43,7 @@ static int needsRebuilding(Target *t) {
         return 0;
     }
     //file target doesn't exist, needs rebuilding
-    if (fopen(t->name, r) == NULL) {
+    if (fopen(t->name, "r") == NULL) {
         return 1;
     }
     //target is an existing file with recipes
@@ -66,20 +66,24 @@ static int needsRebuilding(Target *t) {
 }
 
 static int buildTarget(Target *t) {
-    pid_t pid = fork();
-    if (pid) {
-        int exitVal = wait(&pid);
-        if (exitVal) {
-            fprintf(stderr, "failed to execute recipe for target \"%s\"", t->name);
-            exit(1);
-        }
-    } else {
-        ListIterator *iterator = newListIterator(t->recipes);
-        while (hasNext(iterator)) {
-            char **curr = (char**)getNext(iterator);
-            if (execvp(curr[0], curr)) {
+    ListIterator *iterator = newListIterator(t->recipes);
+    while (hasNext(iterator)) {
+        char **curr = (char**)getNext(iterator);
+        pid_t pid = fork();
+        // printf("pid pre-if: %d\n", pid);
+        if (pid != 0) {
+            // printf("pid post-if: %d\n", pid);
+            int exitVal = wait(&pid);
+            // printf("Exit value from child is: %d pid: %d\n", exitVal,  pid);
+            if (pid != 0) {
+                fprintf(stderr, "failed to execute recipe for target \"%s\"\n", t->name);
+                exit(1);
+            }
+        } else {
+            int i;
+            if (i = execvp(curr[0], curr)) {
+                // printf("Return val from execvp: %d\n", i);
                 free(iterator);
-                printf("bad\n");
                 exit(1);
             }
         }

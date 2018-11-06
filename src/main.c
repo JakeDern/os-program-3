@@ -6,11 +6,12 @@
 int main(int argc, char **argv) {
   TargetGraph *graph;
    
-  if ( (graph = parseMakefile("testmake.txt")) == NULL) {
+  if ( (graph = parseMakefile("makefile")) == NULL) {
     fprintf(stderr, "failed to find specified makefile\n");
     exit(1);
   }
 
+    printGraph(graph);
 
   //check for cycles in graph
   ListIterator *iterator = newListIterator(graph->buildTargets);
@@ -18,7 +19,7 @@ int main(int argc, char **argv) {
     Target *curr = getNext(iterator);
     if (hasCycle(curr)) {
       free(iterator);
-      fprintf(stderr, "Cyclical dependency detected with target %s exiting program\n", curr->name);
+      fprintf(stderr,"Cycle Detected\n");
       exit(1);
     }
   }
@@ -44,6 +45,5 @@ int main(int argc, char **argv) {
     buildTarget = getItemAt(graph->buildTargets, 0);
   }
 
-  printGraph(graph);
-  // buildProgram(buildTarget);
+  buildProgram(buildTarget);
 }

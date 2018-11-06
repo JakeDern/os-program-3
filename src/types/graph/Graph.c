@@ -103,6 +103,7 @@ static int hasCycleHelper(Target *t, LinkedList *l) {
   while(hasNext(iterator)) {
     Target *next = getNext(iterator);
     if (hasCycleHelper(next, l)) {
+      fprintf(stderr,  "%s<-", next->name);
       free(iterator);
       return 1;
     }
