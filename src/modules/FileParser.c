@@ -42,10 +42,6 @@ TargetGraph *parseMakefile(char *filename) {
         break;
       }
       case '\t': {
-        if (isBlankLine(readBuff, lineLength) == 1) {
-          break;
-        }
-
         if (currTarget == NULL) {
           fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
           exit(1);
