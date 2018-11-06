@@ -7,8 +7,8 @@
 #include "../types/linked_list/ListIterator.h"
 #include "../types/linked_list/LinkedList.h"
 
-const int MAX_NAME_LENGTH = 200;
-const int MAX_LINE_LENGTH = 10000;
+const int MAX_NAME_LENGTH = 255;
+const int MAX_LINE_LENGTH = 1024;
 
 static int nextLine(char *buff, int max, FILE *fptr, int lineCount);
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount);
@@ -42,10 +42,6 @@ TargetGraph *parseMakefile(char *filename) {
         break;
       }
       case '\t': {
-        if (isBlankLine(readBuff, lineLength) == 1) {
-          break;
-        }
-
         if (currTarget == NULL) {
           fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
           exit(1);
@@ -117,7 +113,7 @@ static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCo
   tName = strtok(line, ":");
 
   // if NULL, reject line as invalid
-  if (tName == NULL) {
+  if ( (tName == NULL) && (isValidTarget(tName) == 1) ) {
     fprintf(stderr, "%d: Invalid line: %s\n", lineCount, line);
     exit(1);
   }
@@ -134,7 +130,7 @@ static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCo
    * and draw arcs from the target to all of them in the graph
    * */
   char *depName;
-  while ( (depName = strtok(NULL, " \t") ) != NULL ) {
+  while ( (depName = strtok(NULL, " ") ) != NULL ) {
     int depLen = isValidTarget( depName );
     Target *dep;
     if ( depLen != 0) {
