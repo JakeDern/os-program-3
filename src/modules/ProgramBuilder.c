@@ -19,6 +19,9 @@ int buildProgram(Target *t) {
     }
     buildProgramHelper(t);
 
+    if (t->rebuilt == 0) {
+        buildTarget(t);
+    }
     return 1;
 }
 
@@ -80,8 +83,11 @@ static int buildTarget(Target *t) {
                 exit(1);
             }
         } else {
-            int i;
-            if (i = execvp(curr[0], curr)) {
+            int i = 0;
+            while (curr[i] != NULL) {
+                printf("%s ", curr[i]);
+            }
+            if (execvp(curr[0], curr)) {
                 // printf("Return val from execvp: %d\n", i);
                 free(iterator);
                 exit(1);
