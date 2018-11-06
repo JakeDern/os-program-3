@@ -4,22 +4,25 @@
 #include "./interfaces/ProgramBuilder.h"
 
 int main(int argc, char **argv) {
-  
   TargetGraph *graph;
    
-  if ((graph = parseMakefile("makefile")) == NULL) {
+  if ( (graph = parseMakefile("testmake.txt")) == NULL) {
+    fprintf(stderr, "failed to find specified makefile\n");
     exit(1);
   }
+
 
   //check for cycles in graph
   ListIterator *iterator = newListIterator(graph->buildTargets);
   while (hasNext(iterator)) {
     Target *curr = getNext(iterator);
     if (hasCycle(curr)) {
+      free(iterator);
       fprintf(stderr, "Cyclical dependency detected with target %s exiting program\n", curr->name);
       exit(1);
     }
   }
+  free(iterator);
   
 
    // determine build target
@@ -41,8 +44,6 @@ int main(int argc, char **argv) {
     buildTarget = getItemAt(graph->buildTargets, 0);
   }
 
-  
-    buildProgram(buildTarget);
-  
-
+  printGraph(graph);
+  // buildProgram(buildTarget);
 }

@@ -87,7 +87,7 @@ int hasCycle(Target *t) {
   }
 
   free(iterator);
-  freeList(l);
+  //freeList(l);
   return 0;  
 }
 

@@ -18,7 +18,7 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g);
 static Target *findOrCreateRoot(char *s, TargetGraph *g);
 static int isWhiteSpace(char c);
 static int isBlankLine(char *line, int length);
-static void printGraph(TargetGraph *graph);
+void printGraph(TargetGraph *graph);
 static int isValidRecipeToken(char *token);
 
 /** @override */
@@ -42,14 +42,18 @@ TargetGraph *parseMakefile(char *filename) {
         break;
       }
       case '\t': {
+        if (isBlankLine(readBuff, lineLength) == 1) {
+          break;
+        }
+
         if (currTarget == NULL) {
-          fprintf(stderr, "recipe detected before target\n");
+          fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
           exit(1);
         }
         //TODO handle bad lines starting with multiple tabs
         char **recipe = readRecipe(readBuff, lineLength, lineCnt);
         if (recipe == NULL ){
-          fprintf(stderr, "Bad recipe found on line %d\n", lineCnt);
+          fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
         }
         addRecipe(currTarget, recipe);
       }
@@ -59,7 +63,7 @@ TargetGraph *parseMakefile(char *filename) {
       }
       case ' ': {
         if (isBlankLine(readBuff, lineLength) == 0) {
-          fprintf(stderr, "Invalid line at line number %d\n", lineCnt);
+          fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
           exit(1);
         } 
         break;
@@ -71,10 +75,7 @@ TargetGraph *parseMakefile(char *filename) {
     lineCnt++;
   }
 
-  // printGraph(graph);
-
-  // TODO no
-  return NULL;
+  return graph;
 }
 
 static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
@@ -100,15 +101,18 @@ static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
   if (done) {
     return length;
   } else {
-    fprintf(stderr, "Line exceeded maximum length of %d on line %d\n", max, lineCount);
+    fprintf(stderr, "%d: Invalid line: %s...\n", lineCount, buff);
     exit(1);
   }
 }
 
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount) {
   // fetch name of target
-  // TODO handle when there is no colon, strok just resturns whole line
-  // instead of null
+  if (strchr(line, ':') == NULL) {
+    fprintf(stderr, "%d: Invalid line: %s\n", lineCount, line);
+    exit(1);
+  }
+
   char *tName;
   tName = strtok(line, ":");
 
@@ -198,6 +202,7 @@ static Target *findOrCreateRoot(char *s, TargetGraph *g) {
       addBuildTarget(g ,t);
     }
   } else {
+    fprintf(stderr, "duplicate target \"%s\" found on line\n", s);
     return NULL;
   }
 
@@ -277,7 +282,7 @@ static char **readRecipe(char* line, int lineLength, int lineCount) {
 }
 
 static int isValidRecipeToken(char *token) {
-  char c; 
+  char c = '1'; 
   int idx = 0;
   while (c != '\0') {
     c = token[idx];
@@ -309,7 +314,7 @@ static int isWhiteSpace(char c) {
   }
 }
 
-static void printGraph(TargetGraph *graph) {
+void printGraph(TargetGraph *graph) {
   ListIterator *targetItr = newListIterator(graph->targets);
   ListIterator *buildItr = newListIterator(graph->buildTargets);
   
@@ -322,6 +327,7 @@ static void printGraph(TargetGraph *graph) {
       Target *dep = (Target *)getNext(depItr);
       printf("%s ", dep->name);
     }
+    free(depItr);
     printf("\n");
   }
   printf("\n\n");
@@ -335,7 +341,11 @@ static void printGraph(TargetGraph *graph) {
       Target *dep = (Target *)getNext(depItr);
       printf("%s ", dep->name);
     }
+    free(depItr);
     printf("\n");
   }
   printf("\n\n");
+
+  free(targetItr);
+  free(buildItr);
 }

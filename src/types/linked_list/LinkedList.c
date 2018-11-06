@@ -72,10 +72,12 @@ void *pop(LinkedList *l) {
 
   // remove head
   ListNode *n = l->head->next;
+  void *data = n->data;
   l->head->next = l->head->next->next;
   l->size--;
 
-  return n->data;
+  free(n);
+  return data;
 }
 
 /** @override */
@@ -150,9 +152,11 @@ void* listContains(LinkedList *l, void *item) {
   
   while (hasNext(iterator)) {
     if (item == (getNext(iterator))) {
+      free(iterator);
       return item;
     }
   }
+  free(iterator);
   return NULL;
 
 }
