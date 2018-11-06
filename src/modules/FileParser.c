@@ -136,11 +136,11 @@ static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCo
     if ( depLen != 0) {
       dep = findOrCreateTarget(depName, g);
       if (dep == NULL) {
-        fprintf(stderr, "Invalid dependency \"%s\" found on line %d", depName, lineCount);
+        fprintf(stderr, "Invalid dependency \"%s\" found on line %d\n", depName, lineCount);
         exit(1);
       }
     } else {
-      fprintf(stderr, "Invalid dependency name \"%s\" found on line %d", depName, lineCount);
+      fprintf(stderr, "Invalid dependency name \"%s\" found on line %d\n", depName, lineCount);
       exit(1);
     }
 
