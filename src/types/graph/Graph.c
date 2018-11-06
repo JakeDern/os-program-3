@@ -8,10 +8,6 @@
 static int containsTarget(Target *t, LinkedList *l);
 static int hasCycleHelper(Target *t, LinkedList *l);
 
-// int main(int argc, char **argv) {
-  
-// }
-
 /** @override */
 TargetGraph *newTargetGraph() {
   TargetGraph *g;
