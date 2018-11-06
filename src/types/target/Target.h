@@ -9,6 +9,7 @@ typedef struct Target {
     LinkedList *dependencies;
     /** @type char* */
     LinkedList *recipes;
+    int rebuilt;
 } Target;
 
 /**

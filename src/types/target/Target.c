@@ -21,6 +21,7 @@ Target *newTarget(char *name) {
     exit(1);
   }
 
+  t->rebuilt = 0;
   t->name = name;
   t->dependencies = newLinkedList(sizeof(Target), LIST);
   t->recipes = newLinkedList(sizeof(char*), LIST);
