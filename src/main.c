@@ -15,10 +15,6 @@ typedef struct CommandParse {
 
 static CommandParse *parseCommand(int argc, char **argv);
 
-
-// TODO -f flag
-// TODO check makefile and Makefile
-
 int main(int argc, char **argv) {
   TargetGraph *graph;
   CommandParse *cmd = parseCommand(argc, argv);
@@ -28,11 +24,13 @@ int main(int argc, char **argv) {
   if (cmd->fflag) {
     if ( (graph = parseMakefile(cmd->makeFile)) == NULL) {
       fprintf(stderr, "Unable to find makefile at %s\n", cmd->makeFile);
+      exit(1);
     }
   } else {
       if ( (graph = parseMakefile("makefile")) == NULL) {
         if ( (graph = parseMakefile("Makefile")) == NULL) {
           fprintf(stderr, "Unable to find makefile 'makefile' or 'Makefile'\n");
+          exit(1);
         }
       }
   }
@@ -50,10 +48,10 @@ int main(int argc, char **argv) {
   free(iterator);
   
 
-   // determine build target
+  // determine build target
   if (cmd->buildTarget != NULL) {
     if ((buildTarget = findBuildTarget(graph, cmd->buildTarget)) == NULL) {
-      fprintf(stderr, "build target %s not found in makefile", cmd->buildTarget);
+      fprintf(stderr, "build target %s not found in makefile\n", cmd->buildTarget);
       exit(1);
     }
   } else {
@@ -118,4 +116,6 @@ static CommandParse *parseCommand(int argc, char **argv) {
       return cmd;
     }
   }
+
+  return cmd;
 }
