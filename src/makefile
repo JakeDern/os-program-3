@@ -8,7 +8,7 @@ main.o: main.c
 FileChecker.o: ./modules/FileChecker.c ./interfaces/FileChecker.h
 	gcc -Wall -Wextra -c ./modules/FileChecker.c 
 
-Graph.o:	 ./types/graph/Graph.c ./types/graph/Graph.h
+Graph.o: ./types/graph/Graph.c ./types/graph/Graph.h
 	gcc -Wall -Wextra -c ./types/graph/Graph.c
 
 ListIterator.o: ./types/linked_list/ListIterator.c ./types/linked_list/ListIterator.h

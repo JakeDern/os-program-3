@@ -10,9 +10,9 @@
 const int MAX_NAME_LENGTH = 255;
 const int MAX_LINE_LENGTH = 1024;
 
-static int nextLine(char *buff, int max, FILE *fptr, int lineCount);
-static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount);
-static char **readRecipe(char* line, int lineLength, int lineCount);
+static int nextLine(char *buff, int max, FILE *fptr);
+static Target *readTarget(char* line, TargetGraph *g);
+static char **readRecipe(char* line);
 static int isValidTarget(char *s);
 static Target *findOrCreateTarget(char *s, TargetGraph *g);
 static Target *findOrCreateRoot(char *s, TargetGraph *g);
@@ -37,9 +37,12 @@ TargetGraph *parseMakefile(char *filename) {
   TargetGraph *graph = newTargetGraph();
   while (!feof(fptr)) {
     long int filePos = ftell(fptr);
-    int lineLength = nextLine(readBuff, MAX_LINE_LENGTH, fptr, lineCnt);
-    char firstChar = readBuff[0];
+    int lineLength = nextLine(readBuff, MAX_LINE_LENGTH, fptr);
+    if (lineLength == -1) {
+      rewindAndPerror(fptr, filePos, lineCnt);
+    }
 
+    char firstChar = readBuff[0];
     switch (firstChar) {
       case '#': {
         break;
@@ -49,7 +52,7 @@ TargetGraph *parseMakefile(char *filename) {
           rewindAndPerror(fptr, filePos, lineCnt);
         }
         //TODO handle bad lines starting with multiple tabs
-        char **recipe = readRecipe(readBuff, lineLength, lineCnt);
+        char **recipe = readRecipe(readBuff);
         if (recipe == NULL ){
           rewindAndPerror(fptr, filePos, lineCnt);
         }
@@ -66,7 +69,7 @@ TargetGraph *parseMakefile(char *filename) {
         break;
       }
       default: {
-        currTarget = readTarget(readBuff, lineLength, graph, lineCnt);
+        currTarget = readTarget(readBuff, graph);
         if (currTarget == NULL) {
           rewindAndPerror(fptr, filePos, lineCnt);
         }
@@ -78,7 +81,7 @@ TargetGraph *parseMakefile(char *filename) {
   return graph;
 }
 
-static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
+static int nextLine(char *buff, int max, FILE *fptr) {
   int length = 0;
   char c;
   int done = 0;
@@ -101,12 +104,11 @@ static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
   if (done) {
     return length;
   } else {
-    fprintf(stderr, "%d: Invalid line: %s...\n", lineCount, buff);
-    exit(1);
+    return -1;
   }
 }
 
-static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount) {
+static Target *readTarget(char* line, TargetGraph *g) {
   // fetch name of target
   if (strchr(line, ':') == NULL) {
     return NULL;
@@ -249,7 +251,7 @@ static int isBlankLine(char *line, int lineLength) {
   return 1;
 }
 
-static char **readRecipe(char* line, int lineLength, int lineCount) {
+static char **readRecipe(char* line) {
   char *tok;
   LinkedList *tokens = newLinkedList(sizeof(char*), LIST);
   tok = strtok(line, " \t");
