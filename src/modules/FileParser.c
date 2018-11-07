@@ -81,6 +81,15 @@ TargetGraph *parseMakefile(char *filename) {
   return graph;
 }
 
+/**
+ * Reads the next line in from the provided file pointer,
+ * but only if the line length is less than max
+ * 
+ * @param buff the line
+ * @param max the max number of characters
+ * @param fptr the file pointer
+ * @returns the length of the line on success, -1 otherwise
+ * */
 static int nextLine(char *buff, int max, FILE *fptr) {
   int length = 0;
   char c;
@@ -108,6 +117,15 @@ static int nextLine(char *buff, int max, FILE *fptr) {
   }
 }
 
+/**
+ * Parses a target from the given line and adds it to the 
+ * provided target graph
+ * 
+ * @param line the target line
+ * @param g the graph
+ * @returns Target* if everything was carried out successfully,
+ * NULL otherwise
+ * */
 static Target *readTarget(char* line, TargetGraph *g) {
   // fetch name of target
   if (strchr(line, ':') == NULL) {
@@ -241,6 +259,14 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g) {
   return t;
 }
 
+/**
+ * Determines if the provided line is blank or not
+ * 
+ * @param line the line
+ * @param lineLength the length of the line
+ * @return1 1 iff the line contains just whitespace,
+ * 0 otherwise
+ * */
 static int isBlankLine(char *line, int lineLength) {
   for (int i = 0; i < lineLength; i++) {
     if (isWhiteSpace(line[i]) != 1) {
@@ -291,6 +317,14 @@ static char **readRecipe(char* line) {
   return argv;
 }
 
+/**
+ * Determines if the provided token is a valid recipe name.
+ * Valid recipe names do not include ':' or any whitespace
+ * characters.
+ * 
+ * @param char *token the token
+ * @returns 1 iff the token is a valid recipe name, 0 otherewise
+ * */
 static int isValidRecipeToken(char *token) {
   char c = '1'; 
   int idx = 0;
@@ -312,6 +346,12 @@ static int isValidRecipeToken(char *token) {
   return idx == 0 ? 0 : 1;
 }
 
+/**
+ * Determines if the provided character is whitespace
+ * 
+ * @param the character
+ * @returns 1 iff the character is whitespace, 0 otherwise
+ * */
 static int isWhiteSpace(char c) {
   switch (c) {
     case ' ':
@@ -360,6 +400,12 @@ void printGraph(TargetGraph *graph) {
   free(buildItr);
 }
 
+/**
+ * Rewinds the file to the given point, and prints an
+ * error message formatted as follows:
+ * 
+ * <lineNum>: Invalid Line: "<line contents>"
+ * */
 static void rewindAndPerror(FILE *fptr, int pos, int lineNum) {
   fseek(fptr, 0, pos);
 
