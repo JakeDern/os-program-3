@@ -3,6 +3,9 @@
 #include "./types/linked_list/ListIterator.h"
 #include "./interfaces/ProgramBuilder.h"
 
+// TODO -f flag
+// TODO check makefile and Makefile
+
 int main(int argc, char **argv) {
   TargetGraph *graph;
    

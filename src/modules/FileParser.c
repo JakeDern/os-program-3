@@ -21,6 +21,7 @@ static int isBlankLine(char *line, int length);
 void printGraph(TargetGraph *graph);
 static int isValidRecipeToken(char *token);
 static void trimWhitespace(char *token);
+static void rewindAndPerror(FILE *fptr, int len, int lineNum);
 
 /** @override */
 TargetGraph *parseMakefile(char *filename) {
@@ -35,6 +36,7 @@ TargetGraph *parseMakefile(char *filename) {
   Target *currTarget = NULL;
   TargetGraph *graph = newTargetGraph();
   while (!feof(fptr)) {
+    long int filePos = ftell(fptr);
     int lineLength = nextLine(readBuff, MAX_LINE_LENGTH, fptr, lineCnt);
     char firstChar = readBuff[0];
 
@@ -44,13 +46,15 @@ TargetGraph *parseMakefile(char *filename) {
       }
       case '\t': {
         if (currTarget == NULL) {
-          fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
-          exit(1);
+          // fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
+          // exit(1);
+          rewindAndPerror(fptr, filePos, lineCnt);
         }
         //TODO handle bad lines starting with multiple tabs
         char **recipe = readRecipe(readBuff, lineLength, lineCnt);
         if (recipe == NULL ){
           fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
+          exit(1);
         }
         addRecipe(currTarget, recipe);
       }
@@ -259,6 +263,11 @@ static char **readRecipe(char* line, int lineLength, int lineCount) {
   char *tok;
   LinkedList *tokens = newLinkedList(sizeof(char*), LIST);
   tok = strtok(line, " \t");
+  
+  if (tok == NULL) {
+    return NULL;
+  }
+
   while (tok != NULL) {
     if (isValidRecipeToken(tok) == 0) {
       freeList(tokens);
@@ -360,4 +369,21 @@ void printGraph(TargetGraph *graph) {
 
   free(targetItr);
   free(buildItr);
+}
+
+static void rewindAndPerror(FILE *fptr, int pos, int lineNum) {
+  fseek(fptr, 0, SEEK_SET);
+
+  char c;
+  fprintf(stderr, "%d: Invalid line: ", lineNum);
+  while ( 1 ) {
+    c = fgetc(fptr);
+    if (c == '\n' || c == EOF) {
+      break;
+    }
+    fprintf(stderr, "%c", c);
+  }
+
+  fprintf(stderr, "\n");
+  exit(1);
 }

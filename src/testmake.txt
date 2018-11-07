@@ -1,5 +1,5 @@
 #comment
-all: main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o
+all: main.o FileChecker.o 			 Graph.o 		 LinkedList.o	 ListIterator.o Target.o FileParser.o
 	$(CC) -o $(EXE) main.o FileChecker.o Graph.o LinkedList.o ListIterator.o Target.o FileParser.o
 
 main.o: main.c 

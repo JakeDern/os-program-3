@@ -86,7 +86,9 @@ static int buildTarget(Target *t) {
             int i = 0;
             while (curr[i] != NULL) {
                 printf("%s ", curr[i]);
+                i++;
             }
+            printf("\n");
             if (execvp(curr[0], curr)) {
                 // printf("Return val from execvp: %d\n", i);
                 free(iterator);
