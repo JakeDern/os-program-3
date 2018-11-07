@@ -29,7 +29,6 @@ extern int addArc(Target *parent, Target *child);
  * does not draw and arcs between the node containing
  * this recipe and any others
  * 
- * TODO: int return type?
  * */
 extern void addTarget(TargetGraph *graph, Target *t);
 
@@ -38,7 +37,6 @@ extern void addTarget(TargetGraph *graph, Target *t);
  * does not draw and arcs between the node containing
  * this recipe and any others
  * 
- * TODO: int return type?
  * */
 extern void addBuildTarget(TargetGraph *graph, Target *t);
 

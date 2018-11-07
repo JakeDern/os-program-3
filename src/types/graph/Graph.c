@@ -5,7 +5,6 @@
 #include "../linked_list/ListIterator.h"
 #include "../linked_list/LinkedList.h"
 
-static int containsTarget(Target *t, LinkedList *l);
 static int hasCycleHelper(Target *t, LinkedList *l);
 
 /** @override */
@@ -113,16 +112,4 @@ static int hasCycleHelper(Target *t, LinkedList *l) {
   free(iterator);
   return 0;
 
-}
-
-static int containsTarget(Target *t, LinkedList *l) {
-  ListIterator *iterator = newListIterator(l);
-  while (hasNext(iterator)) {
-    if (t == (Target*)getNext(iterator)) {
-      free(iterator);
-      return 1;
-    }
-  }
-  free(iterator);
-  return 0;
 }

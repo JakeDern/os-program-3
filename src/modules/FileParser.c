@@ -51,7 +51,7 @@ TargetGraph *parseMakefile(char *filename) {
         if (currTarget == NULL) {
           rewindAndPerror(fptr, filePos, lineCnt);
         }
-        //TODO handle bad lines starting with multiple tabs
+
         char **recipe = readRecipe(readBuff);
         if (recipe == NULL ){
           rewindAndPerror(fptr, filePos, lineCnt);
@@ -256,6 +256,10 @@ static char **readRecipe(char* line) {
   LinkedList *tokens = newLinkedList(sizeof(char*), LIST);
   tok = strtok(line, " \t");
   
+  if (isWhiteSpace(*(line+1))) {
+    return NULL;
+  }
+
   if (tok == NULL) {
     return NULL;
   }
@@ -283,13 +287,6 @@ static char **readRecipe(char* line) {
 
   free(tokens->head);
   free(tokens);
-
-  // //printf:("recipe: ");
-  // printf("recipe: ");
-  // for (int i = 0; i < idx; i++) {
-  //   printf("\"%s\" ", argv[i]);
-  // }
-  // printf("\n");
 
   return argv;
 }

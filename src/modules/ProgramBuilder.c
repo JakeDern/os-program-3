@@ -76,7 +76,7 @@ static int buildTarget(Target *t) {
         // printf("pid pre-if: %d\n", pid);
         if (pid != 0) {
             // printf("pid post-if: %d\n", pid);
-            int exitVal = wait(&pid);
+            wait(&pid);
             // printf("Exit value from child is: %d pid: %d\n", exitVal,  pid);
             if (pid != 0) {
                 fprintf(stderr, "failed to execute recipe for target \"%s\"\n", t->name);

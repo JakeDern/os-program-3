@@ -6,7 +6,7 @@ main.o: main.c
 	gcc -Wall -Wextra -c main.c 
 
 FileChecker.o: ./modules/FileChecker.c ./interfaces/FileChecker.h
-	gcc -Wall -Wextra -c ./modules/FileChecker.c 
+		gcc -Wall -Wextra -c ./modules/FileChecker.c 
 
 Graph.o: ./types/graph/Graph.c ./types/graph/Graph.h
 	gcc -Wall -Wextra -c ./types/graph/Graph.c
