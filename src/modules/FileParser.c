@@ -46,15 +46,12 @@ TargetGraph *parseMakefile(char *filename) {
       }
       case '\t': {
         if (currTarget == NULL) {
-          // fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
-          // exit(1);
           rewindAndPerror(fptr, filePos, lineCnt);
         }
         //TODO handle bad lines starting with multiple tabs
         char **recipe = readRecipe(readBuff, lineLength, lineCnt);
         if (recipe == NULL ){
-          fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
-          exit(1);
+          rewindAndPerror(fptr, filePos, lineCnt);
         }
         addRecipe(currTarget, recipe);
       }
@@ -64,13 +61,15 @@ TargetGraph *parseMakefile(char *filename) {
       }
       case ' ': {
         if (isBlankLine(readBuff, lineLength) == 0) {
-          fprintf(stderr, "%d: Invalid line: %s\n", lineCnt, readBuff);
-          exit(1);
+          rewindAndPerror(fptr, filePos, lineCnt);
         } 
         break;
       }
       default: {
         currTarget = readTarget(readBuff, lineLength, graph, lineCnt);
+        if (currTarget == NULL) {
+          rewindAndPerror(fptr, filePos, lineCnt);
+        }
       }
     }
     lineCnt++;
@@ -110,8 +109,7 @@ static int nextLine(char *buff, int max, FILE *fptr, int lineCount) {
 static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCount) {
   // fetch name of target
   if (strchr(line, ':') == NULL) {
-    fprintf(stderr, "%d: Invalid line: %s\n", lineCount, line);
-    exit(1);
+    return NULL;
   }
 
   char *tName;
@@ -119,15 +117,13 @@ static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCo
   trimWhitespace(tName);
   // if NULL, reject line as invalid
   if ( (tName == NULL) || (isValidTarget(tName) == 0) ) {
-    fprintf(stderr, "%d: Invalid line: %s\n", lineCount, line);
-    exit(1);
+    return NULL;
   }
   
   // invalid
   Target* t = findOrCreateRoot(tName, g);
   if (t == NULL) {
-    fprintf(stderr, "Invalid or duplicate target found on line %d\n", lineCount);
-    exit(1);
+    return NULL;
   }
 
   /**
@@ -141,12 +137,10 @@ static Target *readTarget(char* line, int lineLength, TargetGraph *g, int lineCo
     if ( depLen != 0) {
       dep = findOrCreateTarget(depName, g);
       if (dep == NULL) {
-        fprintf(stderr, "Invalid dependency \"%s\" found on line %d\n", depName, lineCount);
-        exit(1);
+        return NULL;
       }
     } else {
-      fprintf(stderr, "Invalid dependency name \"%s\" found on line %d\n", depName, lineCount);
-      exit(1);
+      return NULL;
     }
 
     addDependency(t, dep);
@@ -216,7 +210,6 @@ static Target *findOrCreateRoot(char *s, TargetGraph *g) {
       addBuildTarget(g ,t);
     }
   } else {
-    fprintf(stderr, "duplicate target \"%s\" found on line\n", s);
     return NULL;
   }
 
@@ -242,9 +235,6 @@ static Target *findOrCreateTarget(char *s, TargetGraph *g) {
       addTarget(g, t);
     }
   } 
-  // }else {
-  //   return NULL;
-  // }
 
   return t;
 }
@@ -292,12 +282,12 @@ static char **readRecipe(char* line, int lineLength, int lineCount) {
   free(tokens->head);
   free(tokens);
 
-  //printf:("recipe: ");
-  printf("recipe: ");
-  for (int i = 0; i < idx; i++) {
-    printf("\"%s\" ", argv[i]);
-  }
-  printf("\n");
+  // //printf:("recipe: ");
+  // printf("recipe: ");
+  // for (int i = 0; i < idx; i++) {
+  //   printf("\"%s\" ", argv[i]);
+  // }
+  // printf("\n");
 
   return argv;
 }
@@ -372,7 +362,7 @@ void printGraph(TargetGraph *graph) {
 }
 
 static void rewindAndPerror(FILE *fptr, int pos, int lineNum) {
-  fseek(fptr, 0, SEEK_SET);
+  fseek(fptr, 0, pos);
 
   char c;
   fprintf(stderr, "%d: Invalid line: ", lineNum);
