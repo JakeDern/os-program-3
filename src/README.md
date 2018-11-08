@@ -7,6 +7,7 @@ This program implements the core functionality of the make program. It has one o
 # Usage
 ```
 $ ./537make | -f <makefile name> | <target name>
+```
 
 # Architecture
 This program is made up of 3 core modules and a couple of types. These types include a Linked List (which also contains stack methods), a Graph, and "Targets" which represent both nodes in the graph and Build Targets as you would think about them in the context of make.
