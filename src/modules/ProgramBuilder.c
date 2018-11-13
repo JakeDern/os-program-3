@@ -80,6 +80,7 @@ static int buildTarget(Target *t) {
             // printf("Exit value from child is: %d pid: %d\n", exitVal,  pid);
             if (pid != 0) {
                 fprintf(stderr, "failed to execute recipe for target \"%s\"\n", t->name);
+		free(iterator);
                 exit(1);
             }
         } else {
@@ -91,11 +92,12 @@ static int buildTarget(Target *t) {
             printf("\n");
             if (execvp(curr[0], curr)) {
                 // printf("Return val from execvp: %d\n", i);
-                free(iterator);
+		free(iterator);
                 exit(1);
             }
         }
     }
 t->rebuilt = 1;
+free(iterator);
 return 0;
 }
