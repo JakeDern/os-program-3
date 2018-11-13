@@ -67,10 +67,11 @@ int main(int argc, char **argv) {
 
 static CommandParse *parseCommand(int argc, char **argv) {
   CommandParse *cmd;
-  if ((cmd = malloc(sizeof(CommandParse))) == NULL) {
+  if ( (cmd = malloc(sizeof(CommandParse))) == NULL) {
     fprintf(stderr, "Unable to allocate heap memory\n");
     exit(1);
   }
+  cmd->fflag = 0;
   
   if (argc > 4) {
     fprintf(stderr, "Usage error: too many command arguments\n");
