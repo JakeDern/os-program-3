@@ -74,7 +74,6 @@ static CommandParse *parseCommand(int argc, char **argv) {
   
   if (argc > 4) {
     fprintf(stderr, "Usage error: too many command arguments\n");
-    free(cmd);
     exit(1);
   }
 
@@ -97,7 +96,6 @@ static CommandParse *parseCommand(int argc, char **argv) {
     }
     else {
       fprintf(stderr, "Usage error: too many command arguemnts\n");
-      free(cmd);
       exit(1);
     }
   }
@@ -109,13 +107,13 @@ static CommandParse *parseCommand(int argc, char **argv) {
     }
     else {
       fprintf(stderr, "Usage eror: too many command arguments\n");
+      exit(1);
     }
   }
 
   if (argc == 2) {
     if ( (strcmp(argv[1], "-f")) == 0) {
       fprintf(stderr, "Usage error: -f must be accompanied by a makefile name\n");
-      free(cmd);
       exit(1);
     }
     else {
