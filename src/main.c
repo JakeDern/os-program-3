@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
     buildTarget = getItemAt(graph->buildTargets, 0);
   }
 
+  free(cmd);
   buildProgram(buildTarget);
 }
 
