@@ -27,6 +27,7 @@ Code before:
 ```
 CommandParse *cmd = malloc(sizeof(CommandParse));
 ```
+
 Code after:
 ```
 CommandParse *cmd;
@@ -36,6 +37,7 @@ if ((cmd = malloc(sizeof(CommandParse))) == NULL) {
 }
 ```
 2. Main.c, lines 76, 98, and 115: Failed to free memory before exit
+
 Code before: 
 ```
 if (argc > 4) {
@@ -51,6 +53,7 @@ exit(1);
 fprintf(stderr, "Usage error: -f must be accompanied by a makefile name\n");
 exit(1);
 ```
+
 Code after:
 ```
 if (argc > 4) {
@@ -71,6 +74,7 @@ exit(1);
 ```
 
 3. main.c, line 70: Jump based on uninitialized value
+
 Code before:
 ```
 if ( (cmd = malloc(sizeof(CommandParse))) == NULL) {
@@ -78,6 +82,7 @@ if ( (cmd = malloc(sizeof(CommandParse))) == NULL) {
     exit(1);
   }
 ```
+
 Code after:
 ```
 if ( (cmd = malloc(sizeof(CommandParse))) == NULL) {
@@ -95,6 +100,7 @@ cmd->makeFile = NULL;
 ```
 
 5. ProgramBuilder.c, line 83: Unfreed struct.
+
 Code before: 
 ```
 if (pid != 0) {
@@ -102,6 +108,7 @@ if (pid != 0) {
   exit(1);
 }
 ```
+
 Code after:
 ```
 if (pid != 0) {
@@ -112,6 +119,7 @@ if (pid != 0) {
 ```
 
 6. Graph.c, lines 80-91: Unfreed LinkedList.
+
 Code before:
 ```
  Target *next = getNext(iterator);
@@ -123,6 +131,7 @@ Code before:
   return 0;  
 }
 ```
+
 Code after:
 ```
  Target *next = getNext(iterator);
