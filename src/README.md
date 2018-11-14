@@ -22,6 +22,7 @@ This program is made up of 3 core modules and a couple of types. These types inc
 The output from our valgrind originally displayed several errors, due to various things such as uninitialized values. It is now down to a single error indicating a memory leak. This leak is simply just the contents of the dependency graph before the program exits, and thus does not need to be freed and is not problematic. A summary of the other changes made to the program are listed below: 
 
 1. Main.c, line 69: Failed to check return value of malloc and exit on failure.
+
 Code before: 
 ```
 CommandParse *cmd = malloc(sizeof(CommandParse));
